@@ -1,5 +1,5 @@
-from PyQt6 import QtWidgets, QtGui
-from PyQt6.QtWidgets import QApplication, QMainWindow
+from PySide6 import QtWidgets, QtGui
+from PySide6.QtWidgets import QApplication, QMainWindow
 import sys
 
 def window():

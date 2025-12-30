@@ -1,11 +1,10 @@
 import sys
 
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QGridLayout,
     QPushButton, QLineEdit, QVBoxLayout
 )
-from PyQt6.QtCore import Qt
-
+from PySide6.QtCore import Qt
 
 class Calculator(QMainWindow):
     def __init__(self):
