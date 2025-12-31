@@ -14,8 +14,8 @@ Useful python commands (for Windows):
 * <code>python -m pip freeze > requirements.txt</code>
 * <code>python -m pip install -r requirements.txt</code>
 
-Significant difference for Linux:
-* <code><u>source</u> .venv/bin/activate</code>
+Significant difference for Linux/Mac:
+* <code><u>source</u> .venv/<u>bin</u>/activate</code>
 
 ### To do list
 * ~~Create project in GitHub~~
@@ -23,7 +23,7 @@ Significant difference for Linux:
 * ~~Create virtual environment~~
 * ~~Add modules such as PyQt6~~
 * ~~Add requirements.txt~~
-* Verify successful deployment on Raspberry Pi (and Mac)
+* ~~Verify successful deployment on Raspberry Pi (and Mac)~~
 * Widgetise keypad
 * Create alternative keypad widget
 * Wrap alternative keypads in tab pane

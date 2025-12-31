@@ -6,16 +6,18 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt
 
-class Calculator(QMainWindow):
+# class Calculator(QMainWindow):
+class Calculator(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Calculator")
         self.setFixedSize(300, 400)
 
         # Main widget and layout
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        layout = QVBoxLayout(central_widget)
+        # central_widget = QWidget()
+        # self.setCentralWidget(central_widget)
+        # layout = QVBoxLayout(central_widget)
+        layout = QVBoxLayout(self)
 
         # Display (result/output)
         self.display = QLineEdit("0")
