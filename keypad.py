@@ -10,8 +10,11 @@ from PySide6.QtCore import Qt
 class Calculator(QWidget):
     def __init__(self):
         super().__init__()
+
+        # self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+
         self.setWindowTitle("Calculator")
-        self.setFixedSize(300, 400)
+        self.setFixedSize(600, 800)
 
         # Main widget and layout
         # central_widget = QWidget()
