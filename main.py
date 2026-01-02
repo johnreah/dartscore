@@ -6,7 +6,8 @@ from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QApplication, QWidget, QTabWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QTextEdit, \
     QPushButton
 
-from keypad import Calculator
+from keypadbydart import KeypadByDart
+from keypadbytotal import KeypadByTotal
 
 log = logging.getLogger(__name__)
 
@@ -48,10 +49,14 @@ class AppWindow(QWidget):
 
         hLayoutMiddle = QHBoxLayout()
         edPlayer1History = QTextEdit()
+        edPlayer1History.setReadOnly(True)
+        edPlayer1History.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
+        edPlayer1History.setFont(QFont("Verdana", 18))
+        edPlayer1History.setText("501 - 26 = 475\n475 - 100 = 375\n375 - 57 = 318")
         edPlayer2History = QTextEdit()
         tabWidget = QTabWidget()
-        tabWidget.addTab(Calculator(), "By Total")
-        tabWidget.addTab(Calculator(), "By Dart")
+        tabWidget.addTab(KeypadByTotal(), "By Total")
+        tabWidget.addTab(KeypadByDart(), "By Dart")
         hLayoutMiddle.addWidget(edPlayer1History)
         hLayoutMiddle.addWidget(tabWidget)
         hLayoutMiddle.addWidget(edPlayer2History)
@@ -75,10 +80,11 @@ def main():
     app = QApplication(sys.argv)
     appWindow = AppWindow()
     if sys.argv[-1] != "debug":
+        log.debug("starting in full-screen (release) mode")
         appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         appWindow.showFullScreen()
     else:
-        log.debug("starting in debug mode")
+        log.debug("starting in windowed (debug) mode")
         appWindow.setWindowTitle("Darts Scoreboard")
         appWindow.setGeometry(800, 300, 1280, 720)
         appWindow.show()

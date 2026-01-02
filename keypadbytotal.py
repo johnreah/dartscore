@@ -1,26 +1,17 @@
 import sys
 
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QGridLayout,
-    QPushButton, QLineEdit, QVBoxLayout
+    QApplication, QWidget, QGridLayout,
+    QPushButton, QLineEdit, QVBoxLayout, QStyle
 )
-from PySide6.QtCore import Qt
 
-# class Calculator(QMainWindow):
-class Calculator(QWidget):
+class KeypadByTotal(QWidget):
     def __init__(self):
         super().__init__()
 
-        # self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-        self.setWindowTitle("Calculator")
-        self.setFixedSize(300, 400)
-
-        # Main widget and layout
-        # central_widget = QWidget()
-        # self.setCentralWidget(central_widget)
-        # layout = QVBoxLayout(central_widget)
-        layout = QVBoxLayout(self)
+        vBoxLayout = QVBoxLayout(self)
 
         # Display (result/output)
         self.display = QLineEdit("0")
@@ -35,56 +26,42 @@ class Calculator(QWidget):
                 border: 2px solid #ccc;
             }
         """)
-        layout.addWidget(self.display)
+        vBoxLayout.addWidget(self.display)
 
         # Grid for buttons
-        grid = QGridLayout()
-        layout.addLayout(grid)
+        self.gridLayout = QGridLayout()
+        vBoxLayout.addLayout(self.gridLayout)
 
-        # Button layout (like a real calculator)
-        buttons = [
-            ['C', '±', '%', '÷'],
-            ['7', '8', '9', '×'],
-            ['4', '5', '6', '−'],
-            ['1', '2', '3', '+'],
-            ['0', '.', '=', '']
-        ]
+        styleDigit = "font-family: Verdana; font-size: 36px; background-color: #ffffff;"
+        styleBackspace = "background-color: #ee4444;"
+        styleEnter = "background-color: #44cc44;"
 
-        # Create buttons and add to grid
-        self.button_objects = {}
-        for row_idx, row in enumerate(buttons):
-            for col_idx, text in enumerate(row):
-                if not text:  # Skip empty cell
-                    continue
-
-                btn = QPushButton(text)
-                btn.setFixedHeight(60)
-
-                # Style different types of buttons
-                if text in '0123456789.':
-                    btn.setStyleSheet("QPushButton { font-size: 18px; background-color: #ffffff; }")
-                elif text in 'C±%':
-                    btn.setStyleSheet("QPushButton { font-size: 18px; color: white; background-color: #ff9500; }")
-                elif text in '÷×−+=':
-                    btn.setStyleSheet("QPushButton { font-size: 22px; color: white; background-color: #ff5e00; }")
-                else:
-                    btn.setStyleSheet("QPushButton { font-size: 18px; }")
-
-                # Special case: 0 button spans two columns
-                if text == '0':
-                    grid.addWidget(btn, row_idx, col_idx, 1, 2)
-                else:
-                    grid.addWidget(btn, row_idx, col_idx)
-
-                # Connect button click
-                btn.clicked.connect(self.on_button_click)
-                self.button_objects[text] = btn
-
-        # Make = button span two rows if desired (optional)
-        # For now, we keep layout simple
+        btn7 = self.create_button('7', styleDigit, 0, 0)
+        btn8 = self.create_button('8', styleDigit, 0, 1)
+        btn9 = self.create_button('9', styleDigit, 0, 2)
+        btn4 = self.create_button('4', styleDigit, 1, 0)
+        btn5 = self.create_button('5', styleDigit, 1, 1)
+        btn6 = self.create_button('6', styleDigit, 1, 2)
+        btn1 = self.create_button('1', styleDigit, 2, 0)
+        btn2 = self.create_button('2', styleDigit, 2, 1)
+        btn3 = self.create_button('3', styleDigit, 2, 2)
+        btn0 = self.create_button('0', styleDigit, 3, 0, colspan=3)
+        self.btnBackspace = self.create_button('', styleBackspace, 0, 3, rowspan = 2, fixedHeight = 200, icon = "icons/backspace.png")
+        self.btnEnter = self.create_button('', styleEnter, 2, 3, rowspan = 2, fixedHeight = 200, icon = "icons/enter.png")
 
         self.current_input = ""
         self.reset_display = True
+
+    def create_button(self, text, styleSheet, row, col, rowspan = 1, colspan = 1, fixedHeight = 100, icon = ''):
+        button = QPushButton(text)
+        button.setStyleSheet(styleSheet)
+        self.gridLayout.addWidget(button, row, col, rowspan, colspan)
+        button.clicked.connect(self.on_button_click)
+        button.setFixedHeight(fixedHeight)
+        if icon != '':
+            button.setIcon(QIcon(icon))
+            button.setIconSize(QSize(40, 40))
+        return button
 
     def on_button_click(self):
         btn = self.sender()
@@ -137,6 +114,6 @@ class Calculator(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    calc = Calculator()
+    calc = KeypadByTotal()
     calc.show()
     sys.exit(app.exec())
