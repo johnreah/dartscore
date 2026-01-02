@@ -14,7 +14,7 @@ class Calculator(QWidget):
         # self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
 
         self.setWindowTitle("Calculator")
-        self.setFixedSize(600, 800)
+        self.setFixedSize(300, 400)
 
         # Main widget and layout
         # central_widget = QWidget()
