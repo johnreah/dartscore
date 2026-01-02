@@ -69,6 +69,7 @@ class AppWindow(QWidget):
         hLayoutBottom.addWidget(edStatusBar)
         btnExit = QPushButton()
         btnExit.setText("Exit")
+        btnExit.setStyleSheet("font-family: Verdana; font-size: 18px;")
         btnExit.clicked.connect(lambda: self.close())
         hLayoutBottom.addWidget(btnExit)
         vLayout.addLayout(hLayoutBottom)
@@ -78,8 +79,8 @@ def main():
     log.debug("starting main()")
     app = QApplication(sys.argv)
     appWindow = AppWindow()
-    # appWindow.showFullScreen()
-    appWindow.show()
+    appWindow.showFullScreen()
+    # appWindow.show()
     sys.exit(app.exec())
 
 if __name__ == '__main__':
