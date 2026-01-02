@@ -14,11 +14,6 @@ class AppWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
-
-        self.setGeometry(0, 0, 1280, 720)
-        self.setWindowTitle("Darts Scoreboard")
-
         vLayout = QVBoxLayout(self)
 
         hLayoutTop = QtWidgets.QHBoxLayout()
@@ -79,8 +74,15 @@ def main():
     log.debug("starting main()")
     app = QApplication(sys.argv)
     appWindow = AppWindow()
-    appWindow.showFullScreen()
-    # appWindow.show()
+    if sys.argv[-1] != "debug":
+        appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        appWindow.showFullScreen()
+    else:
+        log.debug("starting in debug mode")
+        appWindow.setWindowTitle("Darts Scoreboard")
+        appWindow.setGeometry(800, 300, 1280, 720)
+        appWindow.show()
+
     sys.exit(app.exec())
 
 if __name__ == '__main__':
