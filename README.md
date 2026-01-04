@@ -32,4 +32,10 @@ Significant difference for Linux/Mac:
 * Experiment with bitmpas for buttons
 * Implement by-total score editing
 * Widgetise keypad - send signals for output
-* 
+
+https://share.google/iP07d78l5hV7fZdEh
+
+http://neatnik.net/adam/bucket/numeric-keypad-iie/
+
+https://www.keyboard-layout-editor.com/
+

@@ -2,7 +2,7 @@ import sys, logging
 
 from PySide6 import QtWidgets#, QtGui
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont
+from PySide6.QtGui import QFont, QFontDatabase
 from PySide6.QtWidgets import QApplication, QWidget, QTabWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QTextEdit, \
     QPushButton, QListView, QListWidget
 
@@ -29,14 +29,16 @@ class AppWindow(QWidget):
         edPlayer2.setAlignment(Qt.AlignmentFlag.AlignLeft)
         edPlayer2.setText("Player 2")
 
+        QFontDatabase.addApplicationFont("fonts/7segment.ttf")
+
         edScore1 = QLineEdit()
-        edScore1.setFont(QFont("Verdana", 36))
+        edScore1.setFont(QFont("7-segment", 72))
         edScore1.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         edScore1.setText("501")
         edScore1.setFixedSize(160, 80)
 
         edScore2 = QLineEdit()
-        edScore2.setFont(QFont("Verdana", 36))
+        edScore2.setFont(QFont("7-segment", 48))
         edScore2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         edScore2.setText("501")
         edScore2.setFixedSize(160, 80)
