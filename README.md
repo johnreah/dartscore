@@ -26,9 +26,9 @@ Significant difference for Linux/Mac:
 * ~~Verify successful deployment on Raspberry Pi (and Mac)~~
 * ~~Create placeholder alternative keypad widget~~
 * ~~Wrap alternative keypads in tab widget~~
-* Adopt 7-segment font for scores
+* ~~Adopt 7-segment font for scores~~
+* ~~Factor out font into parent stylesheet~~
 * Review widget sizes using fixed dimensions where appropriate
-* Factor out font into parent stylesheet
 * Experiment with bitmpas for buttons
 * Implement by-total score editing
 * Widgetise keypad - send signals for output
