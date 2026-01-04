@@ -20,29 +20,31 @@ class AppWindow(QWidget):
 
         hLayoutTop = QtWidgets.QHBoxLayout()
 
+        stylesheet_player_name = "font-family: Verdana; font-size:36pt;"
         edPlayer1 = QLineEdit()
-        edPlayer1.setFont(QFont("Verdana", 24))
-        edPlayer1.setAlignment(Qt.AlignmentFlag.AlignRight)
+        edPlayer1.setStyleSheet(stylesheet_player_name)
+        edPlayer1.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         edPlayer1.setText("Player 1")
 
         edPlayer2 = QLineEdit()
-        edPlayer2.setFont(QFont("Verdana", 24))
-        edPlayer2.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        edPlayer2.setStyleSheet(stylesheet_player_name)
+        edPlayer2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         edPlayer2.setText("Player 2")
 
         QFontDatabase.addApplicationFont("fonts/7segment.ttf")
 
+        score_stylesheet = "color: #E31B23; background-color: black; font-family: '7-segment'; font-size:100pt;"
         edScore1 = QLineEdit()
-        edScore1.setStyleSheet("color: #E31B23; background-color: black; font-family: '7-segment'; font-size:100pt;")
+        edScore1.setStyleSheet(score_stylesheet)
         edScore1.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         edScore1.setText("501")
-        edScore1.setFixedWidth(300)
+        edScore1.setFixedWidth(280)
 
         edScore2 = QLineEdit()
-        edScore2.setFont(QFont("7-segment", 48))
+        edScore2.setStyleSheet(score_stylesheet)
         edScore2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        edScore2.setText("501")
-        # edScore2.setFixedSize(160, 80)
+        edScore2.setText("32")
+        edScore2.setFixedWidth(280)
 
         hLayoutTop.addWidget(edPlayer1)
         hLayoutTop.addWidget(edScore1)
