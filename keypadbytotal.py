@@ -31,6 +31,8 @@ class KeypadByTotal(QWidget):
         # Grid for buttons
         self.gridLayout = QGridLayout()
         vBoxLayout.addLayout(self.gridLayout)
+        self.setFixedWidth(400)
+        vBoxLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         styleDigit = "font-family: Verdana; font-size: 36px; background-color: #ffffff;"
         styleBackspace = "background-color: #ee4444;"
@@ -52,11 +54,13 @@ class KeypadByTotal(QWidget):
         self.current_input = ""
         self.reset_display = True
 
-    def create_button(self, text, styleSheet, row, col, rowspan = 1, colspan = 1, fixedHeight = 100, icon = ''):
+    def create_button(self, text, styleSheet, row, col, rowspan = 1, colspan = 1, fixedWidth = 100, fixedHeight = 100, icon = ''):
         button = QPushButton(text)
         button.setStyleSheet(styleSheet)
         self.gridLayout.addWidget(button, row, col, rowspan, colspan)
         button.clicked.connect(self.on_button_click)
+        if colspan == 1:
+            button.setFixedWidth(fixedWidth)
         button.setFixedHeight(fixedHeight)
         if icon != '':
             button.setIcon(QIcon(icon))

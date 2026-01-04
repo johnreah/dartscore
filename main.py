@@ -21,7 +21,7 @@ class AppWindow(QWidget):
         stylesheet_player_name = "font-size:36pt;"
         stylesheet_player_score = "font-family: '7-segment'; font-size:72pt; color: #E31B23; background-color: black;"
         stylesheet_player_score_history = "font-size:18pt;"
-        stylesheet_tab_widget = "QTabBar::tab { width: 200px; height: 60px; font-size: 18px;}"
+        stylesheet_tab_widget = "QTabBar::tab { width: 300px; height: 50px; font-size: 18px;}"
 
         vLayout = QVBoxLayout(self)
 
@@ -74,6 +74,7 @@ class AppWindow(QWidget):
         tabWidget = QTabWidget()
         tabWidget.addTab(KeypadByTotal(), "By Total")
         tabWidget.addTab(KeypadByDart(), "By Dart")
+        tabWidget.setFixedWidth(600)
         hLayoutMiddle.addWidget(lwPlayer1History)
         hLayoutMiddle.addWidget(tabWidget)
         hLayoutMiddle.addWidget(lwPlayer2History)
