@@ -1,10 +1,11 @@
-import sys, logging
+import logging
+import sys
 
-from PySide6 import QtWidgets#, QtGui
+from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QFontDatabase
 from PySide6.QtWidgets import QApplication, QWidget, QTabWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QTextEdit, \
-    QPushButton, QListView, QListWidget
+    QPushButton, QListWidget
 
 from keypadbydart import KeypadByDart
 from keypadbytotal import KeypadByTotal
@@ -32,16 +33,16 @@ class AppWindow(QWidget):
         QFontDatabase.addApplicationFont("fonts/7segment.ttf")
 
         edScore1 = QLineEdit()
-        edScore1.setFont(QFont("7-segment", 72))
+        edScore1.setStyleSheet("color: #E31B23; background-color: black; font-family: '7-segment'; font-size:100pt;")
         edScore1.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         edScore1.setText("501")
-        edScore1.setFixedSize(160, 80)
+        edScore1.setFixedWidth(300)
 
         edScore2 = QLineEdit()
         edScore2.setFont(QFont("7-segment", 48))
         edScore2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         edScore2.setText("501")
-        edScore2.setFixedSize(160, 80)
+        # edScore2.setFixedSize(160, 80)
 
         hLayoutTop.addWidget(edPlayer1)
         hLayoutTop.addWidget(edScore1)
