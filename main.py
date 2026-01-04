@@ -74,7 +74,7 @@ class AppWindow(QWidget):
         tabWidget = QTabWidget()
         tabWidget.addTab(KeypadByTotal(), "By Total")
         tabWidget.addTab(KeypadByDart(), "By Dart")
-        tabWidget.setFixedWidth(600)
+        # tabWidget.setFixedWidth(600)
         hLayoutMiddle.addWidget(lwPlayer1History)
         hLayoutMiddle.addWidget(tabWidget)
         hLayoutMiddle.addWidget(lwPlayer2History)
@@ -105,6 +105,7 @@ def main():
     else:
         log.debug("starting in windowed (debug) mode")
         appWindow.setWindowTitle("Darts Scoreboard")
+        # appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         appWindow.setGeometry(800, 300, 1280, 720)
         appWindow.show()
     sys.exit(app.exec())

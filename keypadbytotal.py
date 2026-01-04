@@ -1,20 +1,28 @@
 import sys
 
-from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QIcon
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QPalette, QColor
 from PySide6.QtWidgets import (
-    QApplication, QWidget, QGridLayout,
-    QPushButton, QLineEdit, QVBoxLayout, QStyle
+    QApplication, QWidget, QLineEdit, QPushButton
 )
+
 
 class KeypadByTotal(QWidget):
     def __init__(self):
         super().__init__()
 
-        vBoxLayout = QVBoxLayout(self)
+        # self.setFixedWidth(800)
+        # self.setFixedHeight(300)
+
+        self.setAutoFillBackground(True)
+        palette = self.palette()
+        palette.setColor(QPalette.ColorRole.Window, QColor("lightblue"))
+        self.setPalette(palette)
+
+        # vBoxLayout = QVBoxLayout(self)
 
         # Display (result/output)
-        self.display = QLineEdit("0")
+        self.display = QLineEdit(self, "0")
         self.display.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.display.setReadOnly(True)
         self.display.setFixedHeight(60)
@@ -26,46 +34,62 @@ class KeypadByTotal(QWidget):
                 border: 2px solid #ccc;
             }
         """)
-        vBoxLayout.addWidget(self.display)
+
+        hpad = 10
+        vpad = 10
+        w = 100
+        h = 100
+        dispw = 400
+        disph = 60
+
+        # vBoxLayout.addWidget(self.display)
+        self.display.setGeometry(hpad, vpad, dispw, disph)
+
+        btn7 = QPushButton("7", self)
+        btn7.setGeometry(hpad * 1 + w * 0, disph + 2 * vpad, w, h)
+        btna = QPushButton("a", self)
+        btna.setGeometry(hpad * 2 + w * 1, disph + 2 * vpad, w, h)
+        btnb = QPushButton("b", self)
+        btnb.setGeometry(hpad * 3 + w * 2, disph + 2 * vpad, w, h)
+        btnc = QPushButton("c", self)
+        btnc.setGeometry(hpad * 4 + w * 3, disph + 2 * vpad, w, h)
 
         # Grid for buttons
-        self.gridLayout = QGridLayout()
-        vBoxLayout.addLayout(self.gridLayout)
-        self.setFixedWidth(400)
-        vBoxLayout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # self.gridLayout = QGridLayout()
+        # vBoxLayout.addLayout(self.gridLayout)
+        #
+        # styleDigit = "font-family: Verdana; font-size: 36px; background-color: #ffffff;"
+        # styleBackspace = "background-color: #ee4444;"
+        # styleEnter = "background-color: #44cc44;"
+        #
+        # btn7 = self.create_button('7', styleDigit, 0, 0)
+        # btn8 = self.create_button('8', styleDigit, 0, 1)
+        # btn9 = self.create_button('9', styleDigit, 0, 2)
+        # btn4 = self.create_button('4', styleDigit, 1, 0)
+        # btn5 = self.create_button('5', styleDigit, 1, 1)
+        # btn6 = self.create_button('6', styleDigit, 1, 2)
+        # btn1 = self.create_button('1', styleDigit, 2, 0)
+        # btn2 = self.create_button('2', styleDigit, 2, 1)
+        # btn3 = self.create_button('3', styleDigit, 2, 2)
+        # btn0 = self.create_button('0', styleDigit, 3, 0, colspan=3)
+        # self.btnBackspace = self.create_button('', styleBackspace, 0, 3, rowspan = 2, fixedHeight = 200, icon = "icons/backspace.png")
+        # self.btnEnter = self.create_button('', styleEnter, 2, 3, rowspan = 2, fixedHeight = 200, icon = "icons/enter.png")
+        #
+        # self.current_input = ""
+        # self.reset_display = True
 
-        styleDigit = "font-family: Verdana; font-size: 36px; background-color: #ffffff;"
-        styleBackspace = "background-color: #ee4444;"
-        styleEnter = "background-color: #44cc44;"
-
-        btn7 = self.create_button('7', styleDigit, 0, 0)
-        btn8 = self.create_button('8', styleDigit, 0, 1)
-        btn9 = self.create_button('9', styleDigit, 0, 2)
-        btn4 = self.create_button('4', styleDigit, 1, 0)
-        btn5 = self.create_button('5', styleDigit, 1, 1)
-        btn6 = self.create_button('6', styleDigit, 1, 2)
-        btn1 = self.create_button('1', styleDigit, 2, 0)
-        btn2 = self.create_button('2', styleDigit, 2, 1)
-        btn3 = self.create_button('3', styleDigit, 2, 2)
-        btn0 = self.create_button('0', styleDigit, 3, 0, colspan=3)
-        self.btnBackspace = self.create_button('', styleBackspace, 0, 3, rowspan = 2, fixedHeight = 200, icon = "icons/backspace.png")
-        self.btnEnter = self.create_button('', styleEnter, 2, 3, rowspan = 2, fixedHeight = 200, icon = "icons/enter.png")
-
-        self.current_input = ""
-        self.reset_display = True
-
-    def create_button(self, text, styleSheet, row, col, rowspan = 1, colspan = 1, fixedWidth = 100, fixedHeight = 100, icon = ''):
-        button = QPushButton(text)
-        button.setStyleSheet(styleSheet)
-        self.gridLayout.addWidget(button, row, col, rowspan, colspan)
-        button.clicked.connect(self.on_button_click)
-        if colspan == 1:
-            button.setFixedWidth(fixedWidth)
-        button.setFixedHeight(fixedHeight)
-        if icon != '':
-            button.setIcon(QIcon(icon))
-            button.setIconSize(QSize(40, 40))
-        return button
+    # def create_button(self, text, styleSheet, row, col, rowspan = 1, colspan = 1, fixedWidth = 100, fixedHeight = 100, icon = ''):
+    #     button = QPushButton(text)
+    #     button.setStyleSheet(styleSheet)
+    #     self.gridLayout.addWidget(button, row, col, rowspan, colspan)
+    #     button.clicked.connect(self.on_button_click)
+    #     if colspan == 1:
+    #         button.setFixedWidth(fixedWidth)
+    #     button.setFixedHeight(fixedHeight)
+    #     if icon != '':
+    #         button.setIcon(QIcon(icon))
+    #         button.setIconSize(QSize(40, 40))
+    #     return button
 
     def on_button_click(self):
         btn = self.sender()
