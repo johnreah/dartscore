@@ -24,7 +24,12 @@ Significant difference for Linux/Mac:
 * ~~Add modules such as PyQt6~~
 * ~~Add requirements.txt~~
 * ~~Verify successful deployment on Raspberry Pi (and Mac)~~
-* Widgetise keypad
-* Create alternative keypad widget
-* Wrap alternative keypads in tab pane
+* ~~Create placeholder alternative keypad widget~~
+* ~~Wrap alternative keypads in tab widget~~
+* Adopt 7-segment font for scores
+* Review widget sizes using fixed dimensions where appropriate
+* Factor out font into parent stylesheet
+* Experiment with bitmpas for buttons
+* Implement by-total score editing
+* Widgetise keypad - send signals for output
 * 

@@ -4,7 +4,7 @@ from PySide6 import QtWidgets#, QtGui
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import QApplication, QWidget, QTabWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QTextEdit, \
-    QPushButton
+    QPushButton, QListView, QListWidget
 
 from keypadbydart import KeypadByDart
 from keypadbytotal import KeypadByTotal
@@ -48,11 +48,14 @@ class AppWindow(QWidget):
         vLayout.addLayout(hLayoutTop)
 
         hLayoutMiddle = QHBoxLayout()
-        edPlayer1History = QTextEdit()
-        edPlayer1History.setReadOnly(True)
-        edPlayer1History.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop)
+
+        edPlayer1History = QListWidget()
+        edPlayer1History.setItemAlignment(Qt.AlignmentFlag.AlignRight)
         edPlayer1History.setFont(QFont("Verdana", 18))
-        edPlayer1History.setText("501 - 26 = 475\n475 - 100 = 375\n375 - 57 = 318")
+        edPlayer1History.addItems(["501 - 26 = 475", "475 - 100 = 375", "375 - 57 = 318"])
+        edPlayer1History.addItems((str(i) for i in range(50)))
+        edPlayer1History.scrollToBottom()
+
         edPlayer2History = QTextEdit()
         tabWidget = QTabWidget()
         tabWidget.addTab(KeypadByTotal(), "By Total")
@@ -60,6 +63,7 @@ class AppWindow(QWidget):
         hLayoutMiddle.addWidget(edPlayer1History)
         hLayoutMiddle.addWidget(tabWidget)
         hLayoutMiddle.addWidget(edPlayer2History)
+        tabWidget.setStyleSheet("QTabBar::tab { width: 200px; height: 60px; font-family: Verdana; font-size: 18px;}")
         vLayout.addLayout(hLayoutMiddle)
 
         hLayoutBottom = QHBoxLayout()
