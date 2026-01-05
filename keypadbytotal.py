@@ -1,11 +1,13 @@
+import logging
 import sys
 
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QPalette, QColor, QIcon
 from PySide6.QtWidgets import (
-    QApplication, QWidget, QLineEdit, QPushButton
+    QApplication, QWidget, QLineEdit, QPushButton, QSizePolicy
 )
 
+log = logging.getLogger(__name__)
 
 class KeypadByTotal(QWidget):
     def __init__(self):
@@ -47,25 +49,46 @@ class KeypadByTotal(QWidget):
 
         btn_stylesheet = (
             "QPushButton { border-image: url(images/btn.png); font-size: 36px; padding-bottom: 10px; } "
-            "QPushButton:pressed { border-image: url(images/btn-pressed.png); padding-bottom: 2px; padding-left: 2px;}"
+            "QPushButton:pressed { border-image: url(images/btn-pressed.png); padding-bottom: 2px; padding-left: 2px; }"
         )
-        btn7 = QPushButton("7", self)
-        btn7.setGeometry(hpad + w * 0, disph, w, h)
-        btn7.setStyleSheet(btn_stylesheet)
+        btn_stylesheet_3x1 = (
+            "QPushButton { border-image: url(images/btn3x1.png); font-size: 36px; padding-bottom: 10px; } "
+            "QPushButton:pressed { border-image: url(images/btn3x1-pressed.png); padding-bottom: 2px; padding-left: 2px; }"
+        )
+        btn_stylesheet_1x2 = (
+            "QPushButton { border-image: url(images/btn1x2.png); font-size: 36px; padding-bottom: 10px; } "
+            "QPushButton:pressed { border-image: url(images/btn1x2-pressed.png); padding-bottom: 2px; padding-left: 2px; }"
+        )
+        btn7 = self.create_button("7", btn_stylesheet, hpad + w * 0, disph + h * 0, w, h)
+        btn8 = self.create_button("8", btn_stylesheet, hpad + w * 1, disph + h * 0, w, h)
+        btn9 = self.create_button("9", btn_stylesheet, hpad + w * 2, disph + h * 0, w, h)
 
-        btna = QPushButton("a", self)
-        btna.setGeometry(hpad + w * 1, disph, w, h)
-        btna.setStyleSheet(btn_stylesheet)
+        btn4 = self.create_button("4", btn_stylesheet, hpad + w * 0, disph + h * 1, w, h)
+        btn5 = self.create_button("5", btn_stylesheet, hpad + w * 1, disph + h * 1, w, h)
+        btn6 = self.create_button("6", btn_stylesheet, hpad + w * 2, disph + h * 1, w, h)
 
-        btnb = QPushButton("b", self)
-        btnb.setGeometry(hpad + w * 2, disph, w, h)
-        btnb.setStyleSheet(btn_stylesheet)
+        btn1 = self.create_button("1", btn_stylesheet, hpad + w * 0, disph + h * 2, w, h)
+        btn2 = self.create_button("2", btn_stylesheet, hpad + w * 1, disph + h * 2, w, h)
+        btn3 = self.create_button("3", btn_stylesheet, hpad + w * 2, disph + h * 2, w, h)
 
-        btnc = QPushButton("", self)
-        btnc.setGeometry(hpad + w * 3, disph, w, h)
-        btnc.setStyleSheet(btn_stylesheet)
-        btnc.setIcon(QIcon("icons/backspace.png"))
-        btnc.setIconSize(QSize(40, 40))
+        btn0 = self.create_button("0", btn_stylesheet_3x1, hpad + w * 0, disph + h * 3, w * 3, h)
+        btn_backspace = self.create_button("", btn_stylesheet_1x2, hpad + w * 3, disph + h * 0, w, h * 2, "icons/backspace.png")
+        btn_enter = self.create_button("", btn_stylesheet_1x2, hpad + w * 3, disph + h * 2, w, h * 2, "icons/enter.png")
+        # btna = QPushButton("a", self)
+        # btna.setGeometry(hpad + w * 1, disph, w, h)
+        # btna.setStyleSheet(btn_stylesheet)
+        #
+        # btnb = QPushButton("b", self)
+        # btnb.setGeometry(hpad + w * 2, disph, w, h)
+        # btnb.setStyleSheet(btn_stylesheet)
+        #
+        # btn4 = self.create_button("4", btn_stylesheet, hpad + w * 0, disph + h, w, h)
+
+        # btnc = QPushButton("", self)
+        # btnc.setGeometry(hpad + w * 3, disph, w, h)
+        # btnc.setStyleSheet(btn_stylesheet)
+        # btnc.setIcon(QIcon("icons/backspace.png"))
+        # btnc.setIconSize(QSize(40, 40))
 
         # btn7.setStyleSheet("QPushButton:pressed { border-image: url(images/btn7.png); font-size: 36px; }")
             # "QPushButton:hover { border-image: url(images/btn7.png); }"
@@ -96,66 +119,64 @@ class KeypadByTotal(QWidget):
         # self.current_input = ""
         # self.reset_display = True
 
-    # def create_button(self, text, styleSheet, row, col, rowspan = 1, colspan = 1, fixedWidth = 100, fixedHeight = 100, icon = ''):
-    #     button = QPushButton(text)
-    #     button.setStyleSheet(styleSheet)
-    #     self.gridLayout.addWidget(button, row, col, rowspan, colspan)
-    #     button.clicked.connect(self.on_button_click)
-    #     if colspan == 1:
-    #         button.setFixedWidth(fixedWidth)
-    #     button.setFixedHeight(fixedHeight)
-    #     if icon != '':
-    #         button.setIcon(QIcon(icon))
-    #         button.setIconSize(QSize(40, 40))
-    #     return button
+    def create_button(self, text, styleSheet, x, y, w, h, icon = ""):
+        button = QPushButton(text, self)
+        button.setStyleSheet(styleSheet)
+        button.setGeometry(x, y, w, h)
+        button.clicked.connect(self.on_button_click)
+        if icon != "":
+            button.setIcon(QIcon(icon))
+            button.setIconSize(QSize(40, 40))
+        return button
 
     def on_button_click(self):
         btn = self.sender()
         text = btn.text()
+        log.debug(text)
 
-        if text == 'C':
-            self.current_input = ""
-            self.display.setText("0")
-            self.reset_display = True
-
-        elif text == '±':
-            if self.current_input:
-                if self.current_input[0] == '-':
-                    self.current_input = self.current_input[1:]
-                else:
-                    self.current_input = '-' + self.current_input
-                self.display.setText(self.current_input)
-
-        elif text == '%':
-            try:
-                value = float(self.current_input) / 100
-                self.current_input = str(value)
-                self.display.setText(self.current_input)
-            except:
-                self.display.setText("Error")
-
-        elif text in '÷×−+':
-            if self.current_input:
-                self.current_input += {'÷': '/', '×': '*', '−': '-', '+': '+'}.get(text, text)
-                self.reset_display = True
-
-        elif text == '=':
-            try:
-                result = eval(self.current_input)  # Note: eval is simple here; for production use safer parsing
-                self.current_input = str(result)
-                self.display.setText(self.current_input)
-                self.reset_display = True
-            except:
-                self.display.setText("Error")
-                self.current_input = ""
-
-        else:  # Numbers and decimal point
-            if self.reset_display:
-                self.current_input = text
-                self.reset_display = False
-            else:
-                self.current_input += text
-            self.display.setText(self.current_input if self.current_input else "0")
+        # if text == 'C':
+        #     self.current_input = ""
+        #     self.display.setText("0")
+        #     self.reset_display = True
+        #
+        # elif text == '±':
+        #     if self.current_input:
+        #         if self.current_input[0] == '-':
+        #             self.current_input = self.current_input[1:]
+        #         else:
+        #             self.current_input = '-' + self.current_input
+        #         self.display.setText(self.current_input)
+        #
+        # elif text == '%':
+        #     try:
+        #         value = float(self.current_input) / 100
+        #         self.current_input = str(value)
+        #         self.display.setText(self.current_input)
+        #     except:
+        #         self.display.setText("Error")
+        #
+        # elif text in '÷×−+':
+        #     if self.current_input:
+        #         self.current_input += {'÷': '/', '×': '*', '−': '-', '+': '+'}.get(text, text)
+        #         self.reset_display = True
+        #
+        # elif text == '=':
+        #     try:
+        #         result = eval(self.current_input)  # Note: eval is simple here; for production use safer parsing
+        #         self.current_input = str(result)
+        #         self.display.setText(self.current_input)
+        #         self.reset_display = True
+        #     except:
+        #         self.display.setText("Error")
+        #         self.current_input = ""
+        #
+        # else:  # Numbers and decimal point
+        #     if self.reset_display:
+        #         self.current_input = text
+        #         self.reset_display = False
+        #     else:
+        #         self.current_input += text
+        #     self.display.setText(self.current_input if self.current_input else "0")
 
 
 if __name__ == '__main__':
