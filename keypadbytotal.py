@@ -1,7 +1,7 @@
 import sys
 
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QPalette, QColor
+from PySide6.QtCore import Qt, QSize
+from PySide6.QtGui import QPalette, QColor, QIcon
 from PySide6.QtWidgets import (
     QApplication, QWidget, QLineEdit, QPushButton
 )
@@ -45,16 +45,29 @@ class KeypadByTotal(QWidget):
         # vBoxLayout.addWidget(self.display)
         self.display.setGeometry(hpad, vpad, dispw, disph)
 
+        btn_stylesheet = (
+            "QPushButton { border-image: url(images/btn.png); font-size: 36px; padding-bottom: 10px; } "
+            "QPushButton:pressed { border-image: url(images/btn-pressed.png); padding-bottom: 2px; padding-left: 2px;}"
+        )
         btn7 = QPushButton("7", self)
-        btn7.setGeometry(hpad * 1 + w * 0, disph + 2 * vpad, w, h)
-        btna = QPushButton("a", self)
-        btna.setGeometry(hpad * 2 + w * 1, disph + 2 * vpad, w, h)
-        btnb = QPushButton("b", self)
-        btnb.setGeometry(hpad * 3 + w * 2, disph + 2 * vpad, w, h)
-        btnc = QPushButton("c", self)
-        btnc.setGeometry(hpad * 4 + w * 3, disph + 2 * vpad, w, h)
+        btn7.setGeometry(hpad + w * 0, disph, w, h)
+        btn7.setStyleSheet(btn_stylesheet)
 
-        btn7.setStyleSheet("QPushButton { border-image: url(images/btn7.png); }")
+        btna = QPushButton("a", self)
+        btna.setGeometry(hpad + w * 1, disph, w, h)
+        btna.setStyleSheet(btn_stylesheet)
+
+        btnb = QPushButton("b", self)
+        btnb.setGeometry(hpad + w * 2, disph, w, h)
+        btnb.setStyleSheet(btn_stylesheet)
+
+        btnc = QPushButton("", self)
+        btnc.setGeometry(hpad + w * 3, disph, w, h)
+        btnc.setStyleSheet(btn_stylesheet)
+        btnc.setIcon(QIcon("icons/backspace.png"))
+        btnc.setIconSize(QSize(40, 40))
+
+        # btn7.setStyleSheet("QPushButton:pressed { border-image: url(images/btn7.png); font-size: 36px; }")
             # "QPushButton:hover { border-image: url(images/btn7.png); }"
             # "QPushButton:pressed { border-image: url(images/btn7.png); }"
             # "QPushButton:disabled { border-image: url(images/btn7.png); }"
