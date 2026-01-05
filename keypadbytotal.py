@@ -55,9 +55,13 @@ class KeypadByTotal(QWidget):
             "QPushButton { border-image: url(images/btn3x1.png); font-size: 36px; padding-bottom: 10px; } "
             "QPushButton:pressed { border-image: url(images/btn3x1-pressed.png); padding-bottom: 2px; padding-left: 2px; }"
         )
-        btn_stylesheet_1x2 = (
-            "QPushButton { border-image: url(images/btn1x2.png); font-size: 36px; padding-bottom: 10px; } "
-            "QPushButton:pressed { border-image: url(images/btn1x2-pressed.png); padding-bottom: 2px; padding-left: 2px; }"
+        btn_stylesheet_1x2_red = (
+            "QPushButton { border-image: url(images/btn1x2-red.png); font-size: 36px; padding-bottom: 10px; } "
+            "QPushButton:pressed { border-image: url(images/btn1x2-red-pressed.png); padding-bottom: 2px; padding-left: 2px; }"
+        )
+        btn_stylesheet_1x2_green = (
+            "QPushButton { border-image: url(images/btn1x2-green.png); font-size: 36px; padding-bottom: 10px; } "
+            "QPushButton:pressed { border-image: url(images/btn1x2-green-pressed.png); padding-bottom: 2px; padding-left: 2px; }"
         )
         btn7 = self.create_button("7", btn_stylesheet, hpad + w * 0, disph + h * 0, w, h)
         btn8 = self.create_button("8", btn_stylesheet, hpad + w * 1, disph + h * 0, w, h)
@@ -72,52 +76,8 @@ class KeypadByTotal(QWidget):
         btn3 = self.create_button("3", btn_stylesheet, hpad + w * 2, disph + h * 2, w, h)
 
         btn0 = self.create_button("0", btn_stylesheet_3x1, hpad + w * 0, disph + h * 3, w * 3, h)
-        btn_backspace = self.create_button("", btn_stylesheet_1x2, hpad + w * 3, disph + h * 0, w, h * 2, "icons/backspace.png")
-        btn_enter = self.create_button("", btn_stylesheet_1x2, hpad + w * 3, disph + h * 2, w, h * 2, "icons/enter.png")
-        # btna = QPushButton("a", self)
-        # btna.setGeometry(hpad + w * 1, disph, w, h)
-        # btna.setStyleSheet(btn_stylesheet)
-        #
-        # btnb = QPushButton("b", self)
-        # btnb.setGeometry(hpad + w * 2, disph, w, h)
-        # btnb.setStyleSheet(btn_stylesheet)
-        #
-        # btn4 = self.create_button("4", btn_stylesheet, hpad + w * 0, disph + h, w, h)
-
-        # btnc = QPushButton("", self)
-        # btnc.setGeometry(hpad + w * 3, disph, w, h)
-        # btnc.setStyleSheet(btn_stylesheet)
-        # btnc.setIcon(QIcon("icons/backspace.png"))
-        # btnc.setIconSize(QSize(40, 40))
-
-        # btn7.setStyleSheet("QPushButton:pressed { border-image: url(images/btn7.png); font-size: 36px; }")
-            # "QPushButton:hover { border-image: url(images/btn7.png); }"
-            # "QPushButton:pressed { border-image: url(images/btn7.png); }"
-            # "QPushButton:disabled { border-image: url(images/btn7.png); }"
-
-        # Grid for buttons
-        # self.gridLayout = QGridLayout()
-        # vBoxLayout.addLayout(self.gridLayout)
-        #
-        # styleDigit = "font-family: Verdana; font-size: 36px; background-color: #ffffff;"
-        # styleBackspace = "background-color: #ee4444;"
-        # styleEnter = "background-color: #44cc44;"
-        #
-        # btn7 = self.create_button('7', styleDigit, 0, 0)
-        # btn8 = self.create_button('8', styleDigit, 0, 1)
-        # btn9 = self.create_button('9', styleDigit, 0, 2)
-        # btn4 = self.create_button('4', styleDigit, 1, 0)
-        # btn5 = self.create_button('5', styleDigit, 1, 1)
-        # btn6 = self.create_button('6', styleDigit, 1, 2)
-        # btn1 = self.create_button('1', styleDigit, 2, 0)
-        # btn2 = self.create_button('2', styleDigit, 2, 1)
-        # btn3 = self.create_button('3', styleDigit, 2, 2)
-        # btn0 = self.create_button('0', styleDigit, 3, 0, colspan=3)
-        # self.btnBackspace = self.create_button('', styleBackspace, 0, 3, rowspan = 2, fixedHeight = 200, icon = "icons/backspace.png")
-        # self.btnEnter = self.create_button('', styleEnter, 2, 3, rowspan = 2, fixedHeight = 200, icon = "icons/enter.png")
-        #
-        # self.current_input = ""
-        # self.reset_display = True
+        btn_backspace = self.create_button("", btn_stylesheet_1x2_red, hpad + w * 3, disph + h * 0, w, h * 2, "icons/backspace.png")
+        btn_enter = self.create_button("", btn_stylesheet_1x2_green, hpad + w * 3, disph + h * 2, w, h * 2, "icons/enter.png")
 
     def create_button(self, text, styleSheet, x, y, w, h, icon = ""):
         button = QPushButton(text, self)
