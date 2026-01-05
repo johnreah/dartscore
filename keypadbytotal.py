@@ -54,6 +54,11 @@ class KeypadByTotal(QWidget):
         btnc = QPushButton("c", self)
         btnc.setGeometry(hpad * 4 + w * 3, disph + 2 * vpad, w, h)
 
+        btn7.setStyleSheet("QPushButton { border-image: url(images/btn7.png); }")
+            # "QPushButton:hover { border-image: url(images/btn7.png); }"
+            # "QPushButton:pressed { border-image: url(images/btn7.png); }"
+            # "QPushButton:disabled { border-image: url(images/btn7.png); }"
+
         # Grid for buttons
         # self.gridLayout = QGridLayout()
         # vBoxLayout.addLayout(self.gridLayout)
