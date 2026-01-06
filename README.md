@@ -28,10 +28,15 @@ Significant difference for Linux/Mac:
 * ~~Wrap alternative keypads in tab widget~~
 * ~~Adopt 7-segment font for scores~~
 * ~~Factor out font into parent stylesheet~~
+* ~~Experiment with bitmpas for buttons~~
+* ~~Implement by-total score editing~~
+* ~~Widgetise keypad - send signals for output~~
 * Review widget sizes using fixed dimensions where appropriate
-* Experiment with bitmpas for buttons
-* Implement by-total score editing
-* Widgetise keypad - send signals for output
+* Park score-by-dart for a later version
+* Implement basic gameplay (reset, turns, etc.)
+* Write and test copy-paste deployment notes
+
+### Links I found useful
 
 https://share.google/iP07d78l5hV7fZdEh
 

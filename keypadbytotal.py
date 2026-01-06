@@ -21,8 +21,16 @@ class KeypadByTotal(QWidget):
     def __init__(self):
         super().__init__()
 
-        # self.setFixedWidth(800)
-        # self.setFixedHeight(300)
+        HPAD = 10
+        VPAD = 10
+        W = 100
+        H = 100
+        DISPW = W * 4
+        DISPH = 60
+
+        self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        self.setFixedWidth(HPAD * 2 + DISPW)
+        self.setFixedHeight(VPAD * 3 + DISPH + H * 4)
 
         self.setAutoFillBackground(True)
         palette = self.palette()
@@ -45,15 +53,8 @@ class KeypadByTotal(QWidget):
             }
         """)
 
-        hpad = 10
-        vpad = 10
-        w = 100
-        h = 100
-        dispw = 400
-        disph = 60
-
         # vBoxLayout.addWidget(self.display)
-        self.display.setGeometry(hpad, vpad, dispw, disph)
+        self.display.setGeometry(HPAD, VPAD, self.width() - 2 * HPAD, 20)
 
         btn_stylesheet = (
             "QPushButton { border-image: url(images/btn.png); font-size: 36px; padding-bottom: 10px; } "
@@ -71,21 +72,21 @@ class KeypadByTotal(QWidget):
             "QPushButton { border-image: url(images/btn1x2-green.png); font-size: 36px; padding-bottom: 10px; } "
             "QPushButton:pressed { border-image: url(images/btn1x2-green-pressed.png); padding-bottom: 2px; padding-left: 2px; }"
         )
-        self.create_button("7", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 0, disph + h * 0, w, h)
-        self.create_button("8", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 1, disph + h * 0, w, h)
-        self.create_button("9", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 2, disph + h * 0, w, h)
+        self.create_button("7", KeypadCommand.DIGIT, btn_stylesheet, HPAD + W * 0, VPAD * 2 + DISPH + H * 0, W, H)
+        self.create_button("8", KeypadCommand.DIGIT, btn_stylesheet, HPAD + W * 1, VPAD * 2 + DISPH + H * 0, W, H)
+        self.create_button("9", KeypadCommand.DIGIT, btn_stylesheet, HPAD + W * 2, VPAD * 2 + DISPH + H * 0, W, H)
 
-        self.create_button("4", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 0, disph + h * 1, w, h)
-        self.create_button("5", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 1, disph + h * 1, w, h)
-        self.create_button("6", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 2, disph + h * 1, w, h)
+        self.create_button("4", KeypadCommand.DIGIT, btn_stylesheet, HPAD + W * 0, VPAD * 2 + DISPH + H * 1, W, H)
+        self.create_button("5", KeypadCommand.DIGIT, btn_stylesheet, HPAD + W * 1, VPAD * 2 + DISPH + H * 1, W, H)
+        self.create_button("6", KeypadCommand.DIGIT, btn_stylesheet, HPAD + W * 2, VPAD * 2 + DISPH + H * 1, W, H)
 
-        self.create_button("1", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 0, disph + h * 2, w, h)
-        self.create_button("2", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 1, disph + h * 2, w, h)
-        self.create_button("3", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 2, disph + h * 2, w, h)
+        self.create_button("1", KeypadCommand.DIGIT, btn_stylesheet, HPAD + W * 0, VPAD * 2 + DISPH + H * 2, W, H)
+        self.create_button("2", KeypadCommand.DIGIT, btn_stylesheet, HPAD + W * 1, VPAD * 2 + DISPH + H * 2, W, H)
+        self.create_button("3", KeypadCommand.DIGIT, btn_stylesheet, HPAD + W * 2, VPAD * 2 + DISPH + H * 2, W, H)
 
-        self.create_button("0", KeypadCommand.DIGIT, btn_stylesheet_3x1, hpad + w * 0, disph + h * 3, w * 3, h)
-        self.create_button("", KeypadCommand.BACKSPACE, btn_stylesheet_1x2_red, hpad + w * 3, disph + h * 0, w, h * 2, "icons/backspace.png")
-        self.create_button("", KeypadCommand.ENTER, btn_stylesheet_1x2_green, hpad + w * 3, disph + h * 2, w, h * 2, "icons/enter.png")
+        self.create_button("0", KeypadCommand.DIGIT, btn_stylesheet_3x1, HPAD + W * 0, VPAD * 2 + DISPH + H * 3, W * 3, H)
+        self.create_button("", KeypadCommand.BACKSPACE, btn_stylesheet_1x2_red, HPAD + W * 3, VPAD * 2 + DISPH + H * 0, W, H * 2, "icons/backspace.png")
+        self.create_button("", KeypadCommand.ENTER, btn_stylesheet_1x2_green, HPAD + W * 3, VPAD * 2 + DISPH + H * 2, W, H * 2, "icons/enter.png")
 
     def create_button(self, text, command, styleSheet, x, y, w, h, icon = None):
         button = QPushButton(text, self)
@@ -114,53 +115,9 @@ class KeypadByTotal(QWidget):
             input = "0"
         self.display.setText(str(int(input)))
 
-        # if text == 'C':
-        #     self.current_input = ""
-        #     self.display.setText("0")
-        #     self.reset_display = True
-        #
-        # elif text == '±':
-        #     if self.current_input:
-        #         if self.current_input[0] == '-':
-        #             self.current_input = self.current_input[1:]
-        #         else:
-        #             self.current_input = '-' + self.current_input
-        #         self.display.setText(self.current_input)
-        #
-        # elif text == '%':
-        #     try:
-        #         value = float(self.current_input) / 100
-        #         self.current_input = str(value)
-        #         self.display.setText(self.current_input)
-        #     except:
-        #         self.display.setText("Error")
-        #
-        # elif text in '÷×−+':
-        #     if self.current_input:
-        #         self.current_input += {'÷': '/', '×': '*', '−': '-', '+': '+'}.get(text, text)
-        #         self.reset_display = True
-        #
-        # elif text == '=':
-        #     try:
-        #         result = eval(self.current_input)  # Note: eval is simple here; for production use safer parsing
-        #         self.current_input = str(result)
-        #         self.display.setText(self.current_input)
-        #         self.reset_display = True
-        #     except:
-        #         self.display.setText("Error")
-        #         self.current_input = ""
-        #
-        # else:  # Numbers and decimal point
-        #     if self.reset_display:
-        #         self.current_input = text
-        #         self.reset_display = False
-        #     else:
-        #         self.current_input += text
-        #     self.display.setText(self.current_input if self.current_input else "0")
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     calc = KeypadByTotal()
-    calc.show()
+    calc.shoW()
     sys.exit(app.exec())
