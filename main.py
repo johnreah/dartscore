@@ -3,9 +3,9 @@ import sys
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont, QFontDatabase
+from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush
 from PySide6.QtWidgets import QApplication, QWidget, QTabWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QTextEdit, \
-    QPushButton, QListWidget
+    QPushButton, QListWidget, QGridLayout, QMainWindow, QLabel
 
 from keypadbydart import KeypadByDart
 from keypadbytotal import KeypadByTotal
@@ -21,7 +21,7 @@ class AppWindow(QWidget):
         stylesheet_player_name = "font-size:36pt;"
         stylesheet_player_score = "font-family: '7-segment'; font-size:72pt; color: #E31B23; background-color: black;"
         stylesheet_player_score_history = "font-size:18pt;"
-        stylesheet_tab_widget = "QTabBar::tab { width: 300px; height: 50px; font-size: 18px;}"
+        # stylesheet_tab_widget = "QTabBar::tab { width: 300px; height: 50px; font-size: 18px;}"
 
         vLayout = QVBoxLayout(self)
 
@@ -49,9 +49,23 @@ class AppWindow(QWidget):
         edScore2.setText("32")
         edScore2.setFixedWidth(250)
 
+        ledPixmapOn = QPixmap("images/led-on.png")
+        ledPixmapOff = QPixmap("images/led-off.png")
+        led1 = QLabel()
+        led1.setFixedSize(30, 30)
+        led1.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        led1.setPixmap(ledPixmapOn.scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatio))
+
+        led2 = QLabel()
+        led2.setFixedSize(30, 30)
+        led2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        led2.setPixmap(ledPixmapOff.scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatio))
+
         hLayoutTop.addWidget(edPlayer1)
+        hLayoutTop.addWidget(led1)
         hLayoutTop.addWidget(edScore1)
         hLayoutTop.addWidget(edScore2)
+        hLayoutTop.addWidget(led2)
         hLayoutTop.addWidget(edPlayer2)
         vLayout.addLayout(hLayoutTop)
 
@@ -74,13 +88,19 @@ class AppWindow(QWidget):
         keypadbytotal = KeypadByTotal()
         keypadbytotal.total_entered.connect(lambda xxx: log.debug(xxx))
 
-        tabWidget = QTabWidget()
-        tabWidget.addTab(keypadbytotal, "By Total")
-        tabWidget.addTab(KeypadByDart(), "By Dart")
-        tabWidget.setStyleSheet(stylesheet_tab_widget)
+        # TabWidget is to enable multiple inpout methods. Not needed for MVP.
+        # tabWidget = QTabWidget()
+        # tabWidget.addTab(keypadbytotal, "By Total")
+        # tabWidget.addTab(KeypadByDart(), "By Dart")
+        # tabWidget.setStyleSheet(stylesheet_tab_widget)
+
+        # Use grid layout for a single centred keypad. Replace with TabWidget later.
+        keypad_layout = QGridLayout()
+        keypad_layout.addWidget(keypadbytotal, 0, 0)
 
         hLayoutMiddle.addWidget(lwPlayer1History)
-        hLayoutMiddle.addWidget(tabWidget)
+        # hLayoutMiddle.addWidget(tabWidget)
+        hLayoutMiddle.addLayout(keypad_layout)
         hLayoutMiddle.addWidget(lwPlayer2History)
         vLayout.addLayout(hLayoutMiddle)
 
@@ -101,14 +121,22 @@ def main():
     log.debug("starting main()")
     app = QApplication(sys.argv)
     appWindow = AppWindow()
-    if sys.argv[-1] != "debug":
+
+    palette = QPalette()
+    pixmap = QPixmap("images/wood.jpg")
+    brush = QBrush(pixmap)
+    palette.setBrush(QPalette.Window, brush)
+    appWindow.setPalette(palette)
+
+    appWindow.setStyleSheet("AppWindow { border-image:url(images/wood.jpg); border-image-repeat: repeat; }; }")
+    if sys.argv[-1] == "fullscreen":
         log.debug("starting in full-screen (release) mode")
         appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         appWindow.showFullScreen()
     else:
         log.debug("starting in windowed (debug) mode")
         appWindow.setWindowTitle("Darts Scoreboard")
-        # appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         appWindow.setGeometry(800, 300, 1280, 720)
         appWindow.show()
     sys.exit(app.exec())

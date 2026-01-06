@@ -25,25 +25,23 @@ class KeypadByTotal(QWidget):
         VPAD = 10
         W = 100
         H = 100
-        DISPW = W * 4
         DISPH = 60
 
         self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        self.setFixedWidth(HPAD * 2 + DISPW)
+        self.setFixedWidth(HPAD * 2 + W * 4)
         self.setFixedHeight(VPAD * 3 + DISPH + H * 4)
 
-        self.setAutoFillBackground(True)
-        palette = self.palette()
-        palette.setColor(QPalette.ColorRole.Window, QColor("lightblue"))
-        self.setPalette(palette)
-
-        # vBoxLayout = QVBoxLayout(self)
+        # Paint background blue - handy when experimenting with layouts
+        # self.setAutoFillBackground(True)
+        # palette = self.palette()
+        # palette.setColor(QPalette.ColorRole.Window, QColor("lightblue"))
+        # self.setPalette(palette)
 
         # Display (result/output)
         self.display = QLineEdit("0", self)
         self.display.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.display.setReadOnly(True)
-        self.display.setFixedHeight(60)
+        self.display.setFixedHeight(DISPH)
         self.display.setStyleSheet("""
             QLineEdit {
                 font-size: 24px;
@@ -53,7 +51,6 @@ class KeypadByTotal(QWidget):
             }
         """)
 
-        # vBoxLayout.addWidget(self.display)
         self.display.setGeometry(HPAD, VPAD, self.width() - 2 * HPAD, 20)
 
         btn_stylesheet = (
@@ -118,6 +115,6 @@ class KeypadByTotal(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    calc = KeypadByTotal()
-    calc.shoW()
+    keypad = KeypadByTotal()
+    keypad.show()
     sys.exit(app.exec())
