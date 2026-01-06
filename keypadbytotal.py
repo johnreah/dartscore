@@ -1,7 +1,8 @@
 import logging
 import sys
+from enum import Enum, auto
 
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtCore import Qt, QSize, Signal
 from PySide6.QtGui import QPalette, QColor, QIcon
 from PySide6.QtWidgets import (
     QApplication, QWidget, QLineEdit, QPushButton, QSizePolicy
@@ -9,7 +10,14 @@ from PySide6.QtWidgets import (
 
 log = logging.getLogger(__name__)
 
+class KeypadCommand(Enum):
+    DIGIT = auto()
+    BACKSPACE = auto()
+    ENTER = auto()
+
 class KeypadByTotal(QWidget):
+    total_entered = Signal(int)
+
     def __init__(self):
         super().__init__()
 
@@ -24,7 +32,7 @@ class KeypadByTotal(QWidget):
         # vBoxLayout = QVBoxLayout(self)
 
         # Display (result/output)
-        self.display = QLineEdit(self, "0")
+        self.display = QLineEdit("0", self)
         self.display.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.display.setReadOnly(True)
         self.display.setFixedHeight(60)
@@ -63,36 +71,48 @@ class KeypadByTotal(QWidget):
             "QPushButton { border-image: url(images/btn1x2-green.png); font-size: 36px; padding-bottom: 10px; } "
             "QPushButton:pressed { border-image: url(images/btn1x2-green-pressed.png); padding-bottom: 2px; padding-left: 2px; }"
         )
-        btn7 = self.create_button("7", btn_stylesheet, hpad + w * 0, disph + h * 0, w, h)
-        btn8 = self.create_button("8", btn_stylesheet, hpad + w * 1, disph + h * 0, w, h)
-        btn9 = self.create_button("9", btn_stylesheet, hpad + w * 2, disph + h * 0, w, h)
+        self.create_button("7", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 0, disph + h * 0, w, h)
+        self.create_button("8", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 1, disph + h * 0, w, h)
+        self.create_button("9", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 2, disph + h * 0, w, h)
 
-        btn4 = self.create_button("4", btn_stylesheet, hpad + w * 0, disph + h * 1, w, h)
-        btn5 = self.create_button("5", btn_stylesheet, hpad + w * 1, disph + h * 1, w, h)
-        btn6 = self.create_button("6", btn_stylesheet, hpad + w * 2, disph + h * 1, w, h)
+        self.create_button("4", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 0, disph + h * 1, w, h)
+        self.create_button("5", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 1, disph + h * 1, w, h)
+        self.create_button("6", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 2, disph + h * 1, w, h)
 
-        btn1 = self.create_button("1", btn_stylesheet, hpad + w * 0, disph + h * 2, w, h)
-        btn2 = self.create_button("2", btn_stylesheet, hpad + w * 1, disph + h * 2, w, h)
-        btn3 = self.create_button("3", btn_stylesheet, hpad + w * 2, disph + h * 2, w, h)
+        self.create_button("1", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 0, disph + h * 2, w, h)
+        self.create_button("2", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 1, disph + h * 2, w, h)
+        self.create_button("3", KeypadCommand.DIGIT, btn_stylesheet, hpad + w * 2, disph + h * 2, w, h)
 
-        btn0 = self.create_button("0", btn_stylesheet_3x1, hpad + w * 0, disph + h * 3, w * 3, h)
-        btn_backspace = self.create_button("", btn_stylesheet_1x2_red, hpad + w * 3, disph + h * 0, w, h * 2, "icons/backspace.png")
-        btn_enter = self.create_button("", btn_stylesheet_1x2_green, hpad + w * 3, disph + h * 2, w, h * 2, "icons/enter.png")
+        self.create_button("0", KeypadCommand.DIGIT, btn_stylesheet_3x1, hpad + w * 0, disph + h * 3, w * 3, h)
+        self.create_button("", KeypadCommand.BACKSPACE, btn_stylesheet_1x2_red, hpad + w * 3, disph + h * 0, w, h * 2, "icons/backspace.png")
+        self.create_button("", KeypadCommand.ENTER, btn_stylesheet_1x2_green, hpad + w * 3, disph + h * 2, w, h * 2, "icons/enter.png")
 
-    def create_button(self, text, styleSheet, x, y, w, h, icon = ""):
+    def create_button(self, text, command, styleSheet, x, y, w, h, icon = None):
         button = QPushButton(text, self)
         button.setStyleSheet(styleSheet)
         button.setGeometry(x, y, w, h)
-        button.clicked.connect(self.on_button_click)
-        if icon != "":
+        command_payload = text if text.isdigit() else None
+        button.clicked.connect(lambda: self.on_button_click(command, command_payload))
+        if icon is not None:
             button.setIcon(QIcon(icon))
             button.setIconSize(QSize(40, 40))
         return button
 
-    def on_button_click(self):
-        btn = self.sender()
-        text = btn.text()
-        log.debug(text)
+    def on_button_click(self, command, payload = None):
+        log.debug("Command={} payload={}".format(command, payload))
+        input = self.display.text()
+
+        if command == KeypadCommand.DIGIT:
+            input += payload
+        elif command == KeypadCommand.BACKSPACE:
+            input = input[:-1]
+            if input == "" or int(input) == 0:
+                input = "0"
+        if command == KeypadCommand.ENTER:
+            log.debug("Entered {}".format(input))
+            self.total_entered.emit(int(input))
+            input = "0"
+        self.display.setText(str(int(input)))
 
         # if text == 'C':
         #     self.current_input = ""

@@ -72,7 +72,9 @@ class AppWindow(QWidget):
         lwPlayer2History.scrollToBottom()
 
         tabWidget = QTabWidget()
-        tabWidget.addTab(KeypadByTotal(), "By Total")
+        keypadbytotal = KeypadByTotal()
+        keypadbytotal.total_entered.connect(lambda xxx: log.debug(xxx))
+        tabWidget.addTab(keypadbytotal, "By Total")
         tabWidget.addTab(KeypadByDart(), "By Dart")
         # tabWidget.setFixedWidth(600)
         hLayoutMiddle.addWidget(lwPlayer1History)
