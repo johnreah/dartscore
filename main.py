@@ -7,12 +7,13 @@ from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush
 from PySide6.QtWidgets import QApplication, QWidget, QTabWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QTextEdit, \
     QPushButton, QListWidget, QGridLayout, QMainWindow, QLabel
 
-from keypadbydart import KeypadByDart
 from keypadbytotal import KeypadByTotal
 
 log = logging.getLogger(__name__)
 
 class AppWindow(QWidget):
+    player_to_throw = None
+
     def __init__(self):
         super().__init__()
 
@@ -37,17 +38,17 @@ class AppWindow(QWidget):
         edPlayer2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         edPlayer2.setText("Player 2")
 
-        edScore1 = QLineEdit()
-        edScore1.setStyleSheet(stylesheet_player_score)
-        edScore1.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        edScore1.setText("501")
-        edScore1.setFixedWidth(250)
+        self.edScore1 = QLineEdit()
+        self.edScore1.setStyleSheet(stylesheet_player_score)
+        self.edScore1.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        self.edScore1.setFixedWidth(250)
+        self.edScore1.setReadOnly(True)
 
-        edScore2 = QLineEdit()
-        edScore2.setStyleSheet(stylesheet_player_score)
-        edScore2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        edScore2.setText("32")
-        edScore2.setFixedWidth(250)
+        self.edScore2 = QLineEdit()
+        self.edScore2.setStyleSheet(stylesheet_player_score)
+        self.edScore2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        self.edScore2.setFixedWidth(250)
+        self.edScore2.setReadOnly(True)
 
         ledPixmapOn = QPixmap("images/led-on.png")
         ledPixmapOff = QPixmap("images/led-off.png")
@@ -63,27 +64,27 @@ class AppWindow(QWidget):
 
         hLayoutTop.addWidget(edPlayer1)
         hLayoutTop.addWidget(led1)
-        hLayoutTop.addWidget(edScore1)
-        hLayoutTop.addWidget(edScore2)
+        hLayoutTop.addWidget(self.edScore1)
+        hLayoutTop.addWidget(self.edScore2)
         hLayoutTop.addWidget(led2)
         hLayoutTop.addWidget(edPlayer2)
         vLayout.addLayout(hLayoutTop)
 
         hLayoutMiddle = QHBoxLayout()
 
-        lwPlayer1History = QListWidget()
-        lwPlayer1History.setItemAlignment(Qt.AlignmentFlag.AlignRight)
-        lwPlayer1History.setStyleSheet(stylesheet_player_score_history)
-        lwPlayer1History.addItems(["501 - 26 = 475", "475 - 100 = 375", "375 - 57 = 318"])
-        lwPlayer1History.addItems((str(i) for i in range(50)))
-        lwPlayer1History.scrollToBottom()
+        self.lwPlayer1History = QListWidget()
+        self.lwPlayer1History.setItemAlignment(Qt.AlignmentFlag.AlignRight)
+        self.lwPlayer1History.setStyleSheet(stylesheet_player_score_history)
+        self.lwPlayer1History.addItems(["501 - 26 = 475", "475 - 100 = 375", "375 - 57 = 318"])
+        self.lwPlayer1History.addItems((str(i) for i in range(50)))
+        self.lwPlayer1History.scrollToBottom()
 
-        lwPlayer2History = QListWidget()
-        lwPlayer2History.setItemAlignment(Qt.AlignmentFlag.AlignRight)
-        lwPlayer2History.setStyleSheet(stylesheet_player_score_history)
-        lwPlayer2History.addItems(["501 - 26 = 475", "475 - 100 = 375", "375 - 57 = 318"])
-        lwPlayer2History.addItems((str(i) for i in range(50)))
-        lwPlayer2History.scrollToBottom()
+        self.lwPlayer2History = QListWidget()
+        self.lwPlayer2History.setItemAlignment(Qt.AlignmentFlag.AlignRight)
+        self.lwPlayer2History.setStyleSheet(stylesheet_player_score_history)
+        self.lwPlayer2History.addItems(["501 - 26 = 475", "475 - 100 = 375", "375 - 57 = 318"])
+        self.lwPlayer2History.addItems((str(i) for i in range(50)))
+        self.lwPlayer2History.scrollToBottom()
 
         keypadbytotal = KeypadByTotal()
         keypadbytotal.total_entered.connect(lambda xxx: log.debug(xxx))
@@ -98,17 +99,22 @@ class AppWindow(QWidget):
         keypad_layout = QGridLayout()
         keypad_layout.addWidget(keypadbytotal, 0, 0)
 
-        hLayoutMiddle.addWidget(lwPlayer1History)
+        hLayoutMiddle.addWidget(self.lwPlayer1History)
         # hLayoutMiddle.addWidget(tabWidget)
+        spacer = QWidget()
+        spacer.setFixedWidth(200)
+        hLayoutMiddle.addWidget(spacer)
         hLayoutMiddle.addLayout(keypad_layout)
-        hLayoutMiddle.addWidget(lwPlayer2History)
+        hLayoutMiddle.addWidget(spacer)
+        hLayoutMiddle.addWidget(self.lwPlayer2History)
         vLayout.addLayout(hLayoutMiddle)
 
         hLayoutBottom = QHBoxLayout()
-        edStatusBar = QLineEdit()
-        edStatusBar.setFont(QFont("Verdana", 18))
-        edStatusBar.setText("This is the status bar")
-        hLayoutBottom.addWidget(edStatusBar)
+        self.edStatusBar = QLineEdit()
+        self.edStatusBar.setFont(QFont("Verdana", 18))
+        self.edStatusBar.setText("This is the status bar")
+        self.edStatusBar.setReadOnly(True)
+        hLayoutBottom.addWidget(self.edStatusBar)
         btnExit = QPushButton()
         btnExit.setText("Exit")
         btnExit.setStyleSheet("font-size: 18px;")
@@ -116,19 +122,41 @@ class AppWindow(QWidget):
         hLayoutBottom.addWidget(btnExit)
         vLayout.addLayout(hLayoutBottom)
 
+    def reset(self):
+        self.edScore1.setText("501")
+        self.edScore2.setText("501")
+        self.lwPlayer1History.clear()
+        self.lwPlayer2History.clear()
+        self.lwPlayer1History.addItem("501")
+        self.lwPlayer1History.setStyleSheet("font-align: right;")
+        self.lwPlayer2History.addItem("501")
+        self.setPlayer(1)
+
+    def setPlayer(self, player_number):
+        if player_number == 1:
+            self.edStatusBar.setText("Player 1 to throw")
+            self.player_to_throw = 1
+        elif player_number == 2:
+            self.edStatusBar.setText("Player 2 to throw")
+            self.player_to_throw = 2
+        else:
+            raise ValueError("Invalid player number")
+
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     log.debug("starting main()")
     app = QApplication(sys.argv)
     appWindow = AppWindow()
 
+    # Paint the background of the main window with a wood effect
     palette = QPalette()
     pixmap = QPixmap("images/wood.jpg")
     brush = QBrush(pixmap)
     palette.setBrush(QPalette.Window, brush)
     appWindow.setPalette(palette)
 
-    appWindow.setStyleSheet("AppWindow { border-image:url(images/wood.jpg); border-image-repeat: repeat; }; }")
+    appWindow.reset()
+
     if sys.argv[-1] == "fullscreen":
         log.debug("starting in full-screen (release) mode")
         appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -136,7 +164,7 @@ def main():
     else:
         log.debug("starting in windowed (debug) mode")
         appWindow.setWindowTitle("Darts Scoreboard")
-        appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        # appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         appWindow.setGeometry(800, 300, 1280, 720)
         appWindow.show()
     sys.exit(app.exec())

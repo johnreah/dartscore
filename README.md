@@ -1,5 +1,22 @@
 # dartscore
-Python app to track darts scores using a Raspberry Pi touch display.
+A Python app to implement a simple darts scoreboard using a Raspberry Pi with a
+touch display.
+
+### Quick start
+I haven't put much (any) effort into packaging this, so you need to clone the
+repository and run it from the command line or an IDE. The target environment
+is a Raspberry Pi, but Python and Qt are available across platforms and the 
+app works on Windows, Mac and Linux. The following commands were tested on
+a fresh install of Linux Mint Cinnamon 22.2, but you should be able to tweak
+them for your own environment.
+
+    apt install -y git python3-pip python3-venv libxcb-cursor0
+    git clone https://github.com/johnreah/dartscore.git
+    cd dartscore
+    python3 -m venv .venv
+    source .venv/bin/activate
+    python -m pip install -r requirements.txt
+    python main.py
 
 ### Design notes
 
