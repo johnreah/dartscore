@@ -48,11 +48,13 @@ Significant difference for Linux/Mac:
 * ~~Experiment with bitmpas for buttons~~
 * ~~Implement by-total score editing~~
 * ~~Widgetise keypad - send signals for output~~
+* ~~Experiment with background in keeping with the visual theme~~
+* ~~Write and test copy-paste deployment notes~~
+* Refactor player widgets into array to reduce code duplication 
 * Review widget sizes using fixed dimensions where appropriate
-* Experiment with background in keeping with the visual theme
-* Park score-by-dart for a later version
 * Implement basic gameplay (reset, turns, etc.)
-* Write and test copy-paste deployment notes
+* Write deployment notes for Raspberry Pi (screen orientation, auto-login)
+* Revisit score entry by-dart for a later version
 
 ### Links I found useful
 

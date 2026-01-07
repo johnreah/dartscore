@@ -50,23 +50,24 @@ class AppWindow(QWidget):
         self.edScore2.setFixedWidth(250)
         self.edScore2.setReadOnly(True)
 
-        ledPixmapOn = QPixmap("images/led-on.png")
-        ledPixmapOff = QPixmap("images/led-off.png")
-        led1 = QLabel()
-        led1.setFixedSize(30, 30)
-        led1.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        led1.setPixmap(ledPixmapOn.scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatio))
+        self.ledPixmapOn = QPixmap("images/led-on.png").scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatio)
+        self.ledPixmapOff = QPixmap("images/led-off.png").scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatio)
 
-        led2 = QLabel()
-        led2.setFixedSize(30, 30)
-        led2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        led2.setPixmap(ledPixmapOff.scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatio))
+        self.led1 = QLabel()
+        self.led1.setFixedSize(30, 30)
+        self.led1.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        self.led1.setPixmap(self.ledPixmapOn)
+
+        self.led2 = QLabel()
+        self.led2.setFixedSize(30, 30)
+        self.led2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        self.led2.setPixmap(self.ledPixmapOff)
 
         hLayoutTop.addWidget(edPlayer1)
-        hLayoutTop.addWidget(led1)
+        hLayoutTop.addWidget(self.led1)
         hLayoutTop.addWidget(self.edScore1)
         hLayoutTop.addWidget(self.edScore2)
-        hLayoutTop.addWidget(led2)
+        hLayoutTop.addWidget(self.led2)
         hLayoutTop.addWidget(edPlayer2)
         vLayout.addLayout(hLayoutTop)
 
@@ -87,7 +88,7 @@ class AppWindow(QWidget):
         self.lwPlayer2History.scrollToBottom()
 
         keypadbytotal = KeypadByTotal()
-        keypadbytotal.total_entered.connect(lambda xxx: log.debug(xxx))
+        keypadbytotal.total_entered.connect(lambda total: self.handleScore(total))
 
         # TabWidget is to enable multiple inpout methods. Not needed for MVP.
         # tabWidget = QTabWidget()
@@ -102,7 +103,7 @@ class AppWindow(QWidget):
         hLayoutMiddle.addWidget(self.lwPlayer1History)
         # hLayoutMiddle.addWidget(tabWidget)
         spacer = QWidget()
-        spacer.setFixedWidth(200)
+        spacer.setFixedWidth(150)
         hLayoutMiddle.addWidget(spacer)
         hLayoutMiddle.addLayout(keypad_layout)
         hLayoutMiddle.addWidget(spacer)
@@ -127,21 +128,48 @@ class AppWindow(QWidget):
         self.edScore2.setText("501")
         self.lwPlayer1History.clear()
         self.lwPlayer2History.clear()
-        item = QListWidgetItem("501")
-        item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
-        self.lwPlayer1History.addItem(item)
-        item = QListWidgetItem("501")
-        item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
-        self.lwPlayer2History.addItem(item)
+        self.appendHistory(1, self.edScore1.text())
+        self.appendHistory(2, self.edScore2.text())
         self.setPlayer(1)
+        if self.player_to_throw == 1 and self.edScore1.text() == "501":
+            self.edStatusBar.setText("Player 1 to throw. Enter score using keypad and press green Enter button when done.")
+
+    def appendHistory(self, player_number, itemString):
+        item = QListWidgetItem(itemString)
+        item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
+        if player_number == 1:
+            self.lwPlayer1History.addItem(item)
+        elif player_number == 2:
+            self.lwPlayer2History.addItem(item)
+
 
     def setPlayer(self, player_number):
         if player_number == 1:
-            self.edStatusBar.setText("Player 1 to throw")
             self.player_to_throw = 1
+            self.led1.setPixmap(self.ledPixmapOn)
+            self.led2.setPixmap(self.ledPixmapOff)
+            self.edStatusBar.setText("Player 1 to throw")
         elif player_number == 2:
-            self.edStatusBar.setText("Player 2 to throw")
             self.player_to_throw = 2
+            self.led1.setPixmap(self.ledPixmapOff)
+            self.led2.setPixmap(self.ledPixmapOn)
+            self.edStatusBar.setText("Player 2 to throw")
+        else:
+            raise ValueError("Invalid player number")
+
+    def handleScore(self, score):
+        if self.player_to_throw == 1:
+            before = int(self.edScore1.text())
+            after = before - score
+            self.edScore1.setText(str(after))
+            self.appendHistory(self.player_to_throw, "{} - {} = {}".format(before, score, after))
+            self.setPlayer(2)
+        elif self.player_to_throw == 2:
+            before = int(self.edScore2.text())
+            after = before - score
+            self.edScore2.setText(str(after))
+            self.appendHistory(self.player_to_throw, "{} - {} = {}".format(before, score, after))
+            self.setPlayer(1)
         else:
             raise ValueError("Invalid player number")
 

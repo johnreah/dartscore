@@ -99,7 +99,6 @@ class KeypadByTotal(QWidget):
     def on_button_click(self, command, payload = None):
         log.debug("Command={} payload={}".format(command, payload))
         input = self.display.text()
-
         if command == KeypadCommand.DIGIT:
             input += payload
         elif command == KeypadCommand.BACKSPACE:
@@ -111,7 +110,6 @@ class KeypadByTotal(QWidget):
             self.total_entered.emit(int(input))
             input = "0"
         self.display.setText(str(int(input)))
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
