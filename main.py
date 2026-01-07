@@ -5,7 +5,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush
 from PySide6.QtWidgets import QApplication, QWidget, QTabWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QTextEdit, \
-    QPushButton, QListWidget, QGridLayout, QMainWindow, QLabel
+    QPushButton, QListWidget, QGridLayout, QMainWindow, QLabel, QListWidgetItem
 
 from keypadbytotal import KeypadByTotal
 
@@ -127,9 +127,12 @@ class AppWindow(QWidget):
         self.edScore2.setText("501")
         self.lwPlayer1History.clear()
         self.lwPlayer2History.clear()
-        self.lwPlayer1History.addItem("501")
-        self.lwPlayer1History.setStyleSheet("font-align: right;")
-        self.lwPlayer2History.addItem("501")
+        item = QListWidgetItem("501")
+        item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
+        self.lwPlayer1History.addItem(item)
+        item = QListWidgetItem("501")
+        item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
+        self.lwPlayer2History.addItem(item)
         self.setPlayer(1)
 
     def setPlayer(self, player_number):
