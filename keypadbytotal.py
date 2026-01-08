@@ -2,6 +2,7 @@ import logging
 import sys
 import os
 import random
+import threading
 from enum import Enum, auto
 
 import pyttsx3
@@ -51,22 +52,21 @@ class KeypadByTotal(QWidget):
         
         log.debug(f"Loaded {len(self.click_sounds)} key sound samples")
         
-        # Initialize text-to-speech engine (cross-platform)
+        # Initialize text-to-speech - will be created per thread to avoid blocking
+        self.tts_voice_id = None
         try:
-            self.tts_engine = pyttsx3.init()
-            # Set properties for British-sounding voice
-            voices = self.tts_engine.getProperty('voices')
+            # Initialize a temporary engine to find the British voice
+            temp_engine = pyttsx3.init()
+            voices = temp_engine.getProperty('voices')
             # Try to find a British English voice
             for voice in voices:
                 if 'en_GB' in voice.id or 'english-uk' in voice.id.lower() or 'daniel' in voice.name.lower():
-                    self.tts_engine.setProperty('voice', voice.id)
+                    self.tts_voice_id = voice.id
                     log.debug(f"Using voice: {voice.name}")
                     break
-            # Set speech rate (slightly slower for clarity)
-            self.tts_engine.setProperty('rate', 150)
+            del temp_engine
         except Exception as e:
             log.warning(f"Failed to initialize TTS engine: {e}")
-            self.tts_engine = None
 
         # Paint background blue - handy when experimenting with layouts
         # self.setAutoFillBackground(True)
@@ -157,14 +157,25 @@ class KeypadByTotal(QWidget):
         self.display.setText(str(int(input)))
     
     def speak_score(self, score):
-        """Use cross-platform text-to-speech to announce the score"""
-        if self.tts_engine:
+        """Use cross-platform text-to-speech to announce the score in a background thread"""
+        def speak_in_thread():
             try:
-                # Speak the score in a separate thread to avoid blocking
-                self.tts_engine.say(str(score))
-                self.tts_engine.runAndWait()
+                # Create a new TTS engine instance for this thread
+                engine = pyttsx3.init()
+                if self.tts_voice_id:
+                    engine.setProperty('voice', self.tts_voice_id)
+                engine.setProperty('rate', 150)
+                engine.say(str(score))
+                engine.runAndWait()
+                # Clean up engine
+                engine.stop()
+                del engine
             except Exception as e:
                 log.warning("Failed to speak score: {}".format(e))
+        
+        # Run TTS in a separate thread to avoid blocking the UI
+        tts_thread = threading.Thread(target=speak_in_thread, daemon=True)
+        tts_thread.start()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
