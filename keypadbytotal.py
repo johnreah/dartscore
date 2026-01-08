@@ -18,22 +18,27 @@ log = logging.getLogger(__name__)
 
 class TTSThread(QThread):
     """Thread for running text-to-speech without blocking UI"""
+    # Class-level lock to ensure only one TTS runs at a time
+    tts_lock = threading.Lock()
+    
     def __init__(self, text, voice_id=None):
         super().__init__()
         self.text = text
         self.voice_id = voice_id
     
     def run(self):
-        try:
-            engine = pyttsx3.init()
-            if self.voice_id:
-                engine.setProperty('voice', self.voice_id)
-            engine.setProperty('rate', 150)
-            engine.say(self.text)
-            engine.runAndWait()
-            engine.stop()
-        except Exception as e:
-            log.warning(f"TTS error: {e}")
+        with TTSThread.tts_lock:
+            try:
+                engine = pyttsx3.init()
+                if self.voice_id:
+                    engine.setProperty('voice', self.voice_id)
+                engine.setProperty('rate', 150)
+                engine.say(self.text)
+                engine.runAndWait()
+                engine.stop()
+                del engine
+            except Exception as e:
+                log.warning(f"TTS error: {e}")
 
 class KeypadCommand(Enum):
     DIGIT = auto()
