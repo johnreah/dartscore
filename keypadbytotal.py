@@ -24,15 +24,23 @@ class TTSThread(QThread):
         self.text = text
         self.engine = engine
         self.lock = lock
+        self.error_occurred = False
     
     def run(self):
         if self.engine:
             with self.lock:
                 try:
+                    # Try to stop any pending speech first
+                    try:
+                        self.engine.stop()
+                    except:
+                        pass
                     self.engine.say(self.text)
                     self.engine.runAndWait()
                 except Exception as e:
                     log.warning(f"TTS error: {e}")
+                    # Signal that engine needs reset
+                    self.error_occurred = True
 
 class KeypadCommand(Enum):
     DIGIT = auto()
@@ -179,7 +187,13 @@ class KeypadByTotal(QWidget):
     def speak_score(self, score):
         """Use cross-platform text-to-speech to announce the score in a background thread"""
         if self.tts_engine:
-            # Clean up finished threads
+            # Clean up finished threads and check for errors
+            finished_threads = [t for t in self.tts_threads if not t.isRunning()]
+            for t in finished_threads:
+                if hasattr(t, 'error_occurred') and t.error_occurred:
+                    log.warning("TTS engine error detected, reinitializing...")
+                    self.reinitialize_tts()
+                    break
             self.tts_threads = [t for t in self.tts_threads if t.isRunning()]
             
             # Skip if there's already a TTS running (prevents queue buildup)
@@ -192,6 +206,30 @@ class KeypadByTotal(QWidget):
             tts_thread.finished.connect(lambda: log.debug("TTS finished"))
             self.tts_threads.append(tts_thread)
             tts_thread.start()
+    
+    def reinitialize_tts(self):
+        """Reinitialize TTS engine after error"""
+        try:
+            # Stop and delete old engine
+            if self.tts_engine:
+                try:
+                    self.tts_engine.stop()
+                except:
+                    pass
+                del self.tts_engine
+            
+            # Create new engine
+            self.tts_engine = pyttsx3.init()
+            voices = self.tts_engine.getProperty('voices')
+            for voice in voices:
+                if 'en_GB' in voice.id or 'english-uk' in voice.id.lower() or 'daniel' in voice.name.lower():
+                    self.tts_engine.setProperty('voice', voice.id)
+                    break
+            self.tts_engine.setProperty('rate', 150)
+            log.info("TTS engine reinitialized successfully")
+        except Exception as e:
+            log.error(f"Failed to reinitialize TTS engine: {e}")
+            self.tts_engine = None
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
