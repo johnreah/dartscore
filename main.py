@@ -28,17 +28,19 @@ class AppWindow(QWidget):
 
         hLayoutTop = QtWidgets.QHBoxLayout()
 
-        edPlayer1 = QLineEdit()
-        edPlayer1.setStyleSheet(stylesheet_player_name)
-        edPlayer1.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        edPlayer1.setFixedHeight(60)
-        edPlayer1.setText("Player 1")
+        self.edPlayer1 = QLineEdit()
+        self.edPlayer1.setStyleSheet(stylesheet_player_name)
+        self.edPlayer1.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        self.edPlayer1.setFixedHeight(60)
+        self.edPlayer1.setMinimumWidth(300)
+        self.edPlayer1.setText("Player 1")
 
-        edPlayer2 = QLineEdit()
-        edPlayer2.setStyleSheet(stylesheet_player_name)
-        edPlayer2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        edPlayer2.setFixedHeight(60)
-        edPlayer2.setText("Player 2")
+        self.edPlayer2 = QLineEdit()
+        self.edPlayer2.setStyleSheet(stylesheet_player_name)
+        self.edPlayer2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        self.edPlayer2.setFixedHeight(60)
+        self.edPlayer2.setMinimumWidth(300)
+        self.edPlayer2.setText("Player 2")
 
         self.edScore1 = QLineEdit()
         self.edScore1.setStyleSheet(stylesheet_player_score)
@@ -65,12 +67,12 @@ class AppWindow(QWidget):
         self.led2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
         self.led2.setPixmap(self.ledPixmapOff)
 
-        hLayoutTop.addWidget(edPlayer1)
+        hLayoutTop.addWidget(self.edPlayer1)
         hLayoutTop.addWidget(self.led1)
         hLayoutTop.addWidget(self.edScore1)
         hLayoutTop.addWidget(self.edScore2)
         hLayoutTop.addWidget(self.led2)
-        hLayoutTop.addWidget(edPlayer2)
+        hLayoutTop.addWidget(self.edPlayer2)
         vLayout.addLayout(hLayoutTop)
 
         hLayoutMiddle = QHBoxLayout()
@@ -144,7 +146,6 @@ class AppWindow(QWidget):
         elif player_number == 2:
             self.lwPlayer2History.addItem(item)
 
-
     def setPlayer(self, player_number):
         if player_number == 1:
             self.player_to_throw = 1
@@ -160,6 +161,7 @@ class AppWindow(QWidget):
             raise ValueError("Invalid player number")
 
     def handleScore(self, score):
+        self.debugDimensions()
         if self.player_to_throw == 1:
             before = int(self.edScore1.text())
             after = before - score
@@ -174,6 +176,13 @@ class AppWindow(QWidget):
             self.setPlayer(1)
         else:
             raise ValueError("Invalid player number")
+
+    def debugDimensions(self):
+        log.debug("window width={} height={}".format(self.width(), self.height()))
+        log.debug("ed1.width={}".format(self.edPlayer1.width()))
+        log.debug("ed2.width={}".format(self.edPlayer2.width()))
+        log.debug("ed1.height={}".format(self.edPlayer1.height()))
+        log.debug("ed2.height={}".format(self.edPlayer2.height()))
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
