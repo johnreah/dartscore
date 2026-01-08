@@ -31,23 +31,25 @@ class AppWindow(QWidget):
         edPlayer1 = QLineEdit()
         edPlayer1.setStyleSheet(stylesheet_player_name)
         edPlayer1.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        edPlayer1.setFixedHeight(60)
         edPlayer1.setText("Player 1")
 
         edPlayer2 = QLineEdit()
         edPlayer2.setStyleSheet(stylesheet_player_name)
         edPlayer2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        edPlayer2.setFixedHeight(60)
         edPlayer2.setText("Player 2")
 
         self.edScore1 = QLineEdit()
         self.edScore1.setStyleSheet(stylesheet_player_score)
         self.edScore1.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        self.edScore1.setFixedWidth(250)
+        self.edScore1.setFixedSize(250, 100)
         self.edScore1.setReadOnly(True)
 
         self.edScore2 = QLineEdit()
         self.edScore2.setStyleSheet(stylesheet_player_score)
         self.edScore2.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
-        self.edScore2.setFixedWidth(250)
+        self.edScore2.setFixedSize(250, 100)
         self.edScore2.setReadOnly(True)
 
         self.ledPixmapOn = QPixmap("images/led-on.png").scaled(30, 30, Qt.AspectRatioMode.KeepAspectRatio)
