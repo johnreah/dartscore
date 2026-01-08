@@ -7,7 +7,7 @@ from enum import Enum, auto
 
 import pyttsx3
 
-from PySide6.QtCore import Qt, QSize, Signal, QUrl
+from PySide6.QtCore import Qt, QSize, Signal, QUrl, QThread
 from PySide6.QtGui import QPalette, QColor, QIcon
 from PySide6.QtMultimedia import QSoundEffect
 from PySide6.QtWidgets import (
@@ -15,6 +15,25 @@ from PySide6.QtWidgets import (
 )
 
 log = logging.getLogger(__name__)
+
+class TTSThread(QThread):
+    """Thread for running text-to-speech without blocking UI"""
+    def __init__(self, text, voice_id=None):
+        super().__init__()
+        self.text = text
+        self.voice_id = voice_id
+    
+    def run(self):
+        try:
+            engine = pyttsx3.init()
+            if self.voice_id:
+                engine.setProperty('voice', self.voice_id)
+            engine.setProperty('rate', 150)
+            engine.say(self.text)
+            engine.runAndWait()
+            engine.stop()
+        except Exception as e:
+            log.warning(f"TTS error: {e}")
 
 class KeypadCommand(Enum):
     DIGIT = auto()
@@ -54,6 +73,7 @@ class KeypadByTotal(QWidget):
         
         # Initialize text-to-speech - will be created per thread to avoid blocking
         self.tts_voice_id = None
+        self.tts_threads = []  # Keep track of active threads
         try:
             # Initialize a temporary engine to find the British voice
             temp_engine = pyttsx3.init()
@@ -158,23 +178,13 @@ class KeypadByTotal(QWidget):
     
     def speak_score(self, score):
         """Use cross-platform text-to-speech to announce the score in a background thread"""
-        def speak_in_thread():
-            try:
-                # Create a new TTS engine instance for this thread
-                engine = pyttsx3.init()
-                if self.tts_voice_id:
-                    engine.setProperty('voice', self.tts_voice_id)
-                engine.setProperty('rate', 150)
-                engine.say(str(score))
-                engine.runAndWait()
-                # Clean up engine
-                engine.stop()
-                del engine
-            except Exception as e:
-                log.warning("Failed to speak score: {}".format(e))
+        # Clean up finished threads
+        self.tts_threads = [t for t in self.tts_threads if t.isRunning()]
         
-        # Run TTS in a separate thread to avoid blocking the UI
-        tts_thread = threading.Thread(target=speak_in_thread, daemon=True)
+        # Create and start new thread
+        tts_thread = TTSThread(str(score), self.tts_voice_id)
+        tts_thread.finished.connect(lambda: log.debug("TTS finished"))
+        self.tts_threads.append(tts_thread)
         tts_thread.start()
 
 if __name__ == '__main__':
