@@ -1,6 +1,8 @@
 import logging
 import sys
 import subprocess
+import os
+import random
 from enum import Enum, auto
 
 from PySide6.QtCore import Qt, QSize, Signal, QUrl
@@ -33,13 +35,20 @@ class KeypadByTotal(QWidget):
         self.setFixedWidth(HPAD * 2 + W * 4)
         self.setFixedHeight(VPAD * 3 + DISPH + H * 4)
 
-        # Initialize sound effect for button clicks
-        self.click_sound = QSoundEffect()
-        # Use custom mechanical keyboard click sound
-        import os
-        sound_path = os.path.join(os.path.dirname(__file__), "sounds", "mechanical_click.wav")
-        self.click_sound.setSource(QUrl.fromLocalFile(sound_path))
-        self.click_sound.setVolume(0.5)
+        # Initialize multiple sound effects for button clicks (for variety)
+        self.click_sounds = []
+        sounds_dir = os.path.join(os.path.dirname(__file__), "sounds")
+        
+        # Load all 10 key samples
+        for i in range(1, 11):
+            sound_effect = QSoundEffect()
+            sound_path = os.path.join(sounds_dir, f"key_sample_{i}.wav")
+            if os.path.exists(sound_path):
+                sound_effect.setSource(QUrl.fromLocalFile(sound_path))
+                sound_effect.setVolume(0.6)
+                self.click_sounds.append(sound_effect)
+        
+        log.debug(f"Loaded {len(self.click_sounds)} key sound samples")
 
         # Paint background blue - handy when experimenting with layouts
         # self.setAutoFillBackground(True)
@@ -109,8 +118,9 @@ class KeypadByTotal(QWidget):
     def on_button_click(self, command, payload = None):
         log.debug("Command={} payload={}".format(command, payload))
         
-        # Play click sound for all button presses
-        self.click_sound.play()
+        # Play random click sound for all button presses (adds variety)
+        if self.click_sounds:
+            random.choice(self.click_sounds).play()
         
         input = self.display.text()
         if command == KeypadCommand.DIGIT:
