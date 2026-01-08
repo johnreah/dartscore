@@ -182,6 +182,11 @@ class KeypadByTotal(QWidget):
             # Clean up finished threads
             self.tts_threads = [t for t in self.tts_threads if t.isRunning()]
             
+            # Skip if there's already a TTS running (prevents queue buildup)
+            if len(self.tts_threads) > 0:
+                log.debug(f"Skipping TTS for {score}, already speaking")
+                return
+            
             # Create and start new thread with shared engine
             tts_thread = TTSThread(str(score), self.tts_engine, self.tts_lock)
             tts_thread.finished.connect(lambda: log.debug("TTS finished"))
