@@ -35,9 +35,11 @@ class KeypadByTotal(QWidget):
 
         # Initialize sound effect for button clicks
         self.click_sound = QSoundEffect()
-        # Use system sound - Tink is a nice click sound on macOS
-        self.click_sound.setSource(QUrl.fromLocalFile("/System/Library/Sounds/Tink.aiff"))
-        self.click_sound.setVolume(0.3)
+        # Use custom mechanical keyboard click sound
+        import os
+        sound_path = os.path.join(os.path.dirname(__file__), "sounds", "mechanical_click.wav")
+        self.click_sound.setSource(QUrl.fromLocalFile(sound_path))
+        self.click_sound.setVolume(0.5)
 
         # Paint background blue - handy when experimenting with layouts
         # self.setAutoFillBackground(True)
