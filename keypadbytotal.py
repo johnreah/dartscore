@@ -1,9 +1,10 @@
 import logging
 import sys
-import subprocess
 import os
 import random
 from enum import Enum, auto
+
+import pyttsx3
 
 from PySide6.QtCore import Qt, QSize, Signal, QUrl
 from PySide6.QtGui import QPalette, QColor, QIcon
@@ -49,6 +50,23 @@ class KeypadByTotal(QWidget):
                 self.click_sounds.append(sound_effect)
         
         log.debug(f"Loaded {len(self.click_sounds)} key sound samples")
+        
+        # Initialize text-to-speech engine (cross-platform)
+        try:
+            self.tts_engine = pyttsx3.init()
+            # Set properties for British-sounding voice
+            voices = self.tts_engine.getProperty('voices')
+            # Try to find a British English voice
+            for voice in voices:
+                if 'en_GB' in voice.id or 'english-uk' in voice.id.lower() or 'daniel' in voice.name.lower():
+                    self.tts_engine.setProperty('voice', voice.id)
+                    log.debug(f"Using voice: {voice.name}")
+                    break
+            # Set speech rate (slightly slower for clarity)
+            self.tts_engine.setProperty('rate', 150)
+        except Exception as e:
+            log.warning(f"Failed to initialize TTS engine: {e}")
+            self.tts_engine = None
 
         # Paint background blue - handy when experimenting with layouts
         # self.setAutoFillBackground(True)
@@ -139,12 +157,14 @@ class KeypadByTotal(QWidget):
         self.display.setText(str(int(input)))
     
     def speak_score(self, score):
-        """Use macOS text-to-speech to announce the score"""
-        try:
-            # Use macOS 'say' command to speak the score
-            subprocess.Popen(['say', str(score)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except Exception as e:
-            log.warning("Failed to speak score: {}".format(e))
+        """Use cross-platform text-to-speech to announce the score"""
+        if self.tts_engine:
+            try:
+                # Speak the score in a separate thread to avoid blocking
+                self.tts_engine.say(str(score))
+                self.tts_engine.runAndWait()
+            except Exception as e:
+                log.warning("Failed to speak score: {}".format(e))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
