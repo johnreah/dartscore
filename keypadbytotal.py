@@ -1,9 +1,11 @@
 import logging
 import sys
+import subprocess
 from enum import Enum, auto
 
-from PySide6.QtCore import Qt, QSize, Signal
+from PySide6.QtCore import Qt, QSize, Signal, QUrl
 from PySide6.QtGui import QPalette, QColor, QIcon
+from PySide6.QtMultimedia import QSoundEffect
 from PySide6.QtWidgets import (
     QApplication, QWidget, QLineEdit, QPushButton, QSizePolicy
 )
@@ -30,6 +32,12 @@ class KeypadByTotal(QWidget):
         self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.setFixedWidth(HPAD * 2 + W * 4)
         self.setFixedHeight(VPAD * 3 + DISPH + H * 4)
+
+        # Initialize sound effect for button clicks
+        self.click_sound = QSoundEffect()
+        # Use system sound - Tink is a nice click sound on macOS
+        self.click_sound.setSource(QUrl.fromLocalFile("/System/Library/Sounds/Tink.aiff"))
+        self.click_sound.setVolume(0.3)
 
         # Paint background blue - handy when experimenting with layouts
         # self.setAutoFillBackground(True)
@@ -98,6 +106,10 @@ class KeypadByTotal(QWidget):
 
     def on_button_click(self, command, payload = None):
         log.debug("Command={} payload={}".format(command, payload))
+        
+        # Play click sound for all button presses
+        self.click_sound.play()
+        
         input = self.display.text()
         if command == KeypadCommand.DIGIT:
             input += payload
@@ -107,9 +119,20 @@ class KeypadByTotal(QWidget):
                 input = "0"
         if command == KeypadCommand.ENTER:
             log.debug("Entered {}".format(input))
-            self.total_entered.emit(int(input))
+            score_value = int(input)
+            self.total_entered.emit(score_value)
+            # Speak the score out loud using macOS text-to-speech
+            self.speak_score(score_value)
             input = "0"
         self.display.setText(str(int(input)))
+    
+    def speak_score(self, score):
+        """Use macOS text-to-speech to announce the score"""
+        try:
+            # Use macOS 'say' command to speak the score
+            subprocess.Popen(['say', str(score)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except Exception as e:
+            log.warning("Failed to speak score: {}".format(e))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
