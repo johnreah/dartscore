@@ -20,7 +20,7 @@ class AppWindow(QWidget):
         QFontDatabase.addApplicationFont("fonts/7segment.ttf")
         self.setStyleSheet("font-family: Verdana;")
         stylesheet_player_name = "font-size:36pt;"
-        stylesheet_player_score = "font-family: '7-segment'; font-size:72pt; color: #E31B23; background-color: black;"
+        stylesheet_player_score = "font-family: '7-Segment'; font-size:72pt; color: #E31B23; background-color: black;"
         stylesheet_player_score_history = "font-size:18pt;"
         # stylesheet_tab_widget = "QTabBar::tab { width: 300px; height: 50px; font-size: 18px;}"
 
