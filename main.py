@@ -80,21 +80,15 @@ class AppWindow(QWidget):
         self.lwPlayer1History = QListWidget()
         self.lwPlayer1History.setItemAlignment(Qt.AlignmentFlag.AlignRight)
         self.lwPlayer1History.setStyleSheet(stylesheet_player_score_history)
-        self.lwPlayer1History.addItems(["501 - 26 = 475", "475 - 100 = 375", "375 - 57 = 318"])
-        self.lwPlayer1History.addItems((str(i) for i in range(50)))
-        self.lwPlayer1History.scrollToBottom()
 
         self.lwPlayer2History = QListWidget()
         self.lwPlayer2History.setItemAlignment(Qt.AlignmentFlag.AlignRight)
         self.lwPlayer2History.setStyleSheet(stylesheet_player_score_history)
-        self.lwPlayer2History.addItems(["501 - 26 = 475", "475 - 100 = 375", "375 - 57 = 318"])
-        self.lwPlayer2History.addItems((str(i) for i in range(50)))
-        self.lwPlayer2History.scrollToBottom()
 
         keypadbytotal = KeypadByTotal()
         keypadbytotal.total_entered.connect(lambda total: self.handleScore(total))
 
-        # TabWidget is to enable multiple inpout methods. Not needed for MVP.
+        # TabWidget is to enable multiple input methods. Not needed for MVP.
         # tabWidget = QTabWidget()
         # tabWidget.addTab(keypadbytotal, "By Total")
         # tabWidget.addTab(KeypadByDart(), "By Dart")
@@ -143,8 +137,10 @@ class AppWindow(QWidget):
         item.setTextAlignment(Qt.AlignmentFlag.AlignRight)
         if player_number == 1:
             self.lwPlayer1History.addItem(item)
+            self.lwPlayer1History.scrollToBottom()
         elif player_number == 2:
             self.lwPlayer2History.addItem(item)
+            self.lwPlayer2History.scrollToBottom()
 
     def setPlayer(self, player_number):
         if player_number == 1:
