@@ -17,5 +17,16 @@ class ScoreUtilsTest(unittest.TestCase):
         valid_score = 177
         self.assertTrue(score_utils.is_valid_score(valid_score), "Score {} should be valid".format(valid_score))
 
+    def test_suggested_checkouts(self):
+        score = 9
+        expected_checkouts = 2
+        suggested_checkouts = score_utils.suggested_checkouts(score)
+        self.assertEqual(len(suggested_checkouts), expected_checkouts, "Number of suggested checkouts for score {} should be {}".format(score, expected_checkouts))
+
+        score = 180
+        expected_checkouts = 0
+        suggested_checkouts = score_utils.suggested_checkouts(score)
+        self.assertEqual(len(suggested_checkouts), expected_checkouts, "Number of suggested checkouts for score {} should be {}".format(score, expected_checkouts))
+
 if __name__ == '__main__':
     unittest.main()
