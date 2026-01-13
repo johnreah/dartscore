@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 
 from PySide6 import QtWidgets
@@ -17,8 +18,8 @@ class AppWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        QFontDatabase.addApplicationFont("fonts/7segment.ttf")
-        QFontDatabase.addApplicationFont("fonts/Chalky.otf")
+        QFontDatabase.addApplicationFont(os.path.join(os.path.dirname(__file__), "fonts/7segment.ttf"))
+        QFontDatabase.addApplicationFont(os.path.join(os.path.dirname(__file__), "fonts/Chalky.otf"))
         self.setStyleSheet("font-family: Verdana;")
         stylesheet_player_name = "font-size:36pt;"
         stylesheet_player_score = "font-family: '7-Segment'; font-size:72pt; color: #E31B23; background-color: black;"
@@ -184,6 +185,8 @@ class AppWindow(QWidget):
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     log.debug("starting main()")
+    log.debug(os.path.dirname(__file__))
+
     app = QApplication(sys.argv)
     appWindow = AppWindow()
 
