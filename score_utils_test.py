@@ -28,5 +28,19 @@ class ScoreUtilsTest(unittest.TestCase):
         suggested_checkouts = score_utils.suggested_checkouts(score)
         self.assertEqual(len(suggested_checkouts), expected_checkouts, "Number of suggested checkouts for score {} should be {}".format(score, expected_checkouts))
 
+        score = 64
+        expected_checkouts = 3
+        suggested_checkouts = score_utils.suggested_checkouts(score)
+        self.assertEqual(len(suggested_checkouts), expected_checkouts, "Number of suggested checkouts for score {} should be {}".format(score, expected_checkouts))
+
+    def test_checkout_exists_when_exists(self):
+        score = 170
+        self.assertTrue(score_utils.checkout_exists(score), "There should be a checkout for {}".format(score))
+
+    def test_checkout_exists_when_not_exists(self):
+        score = 179
+        self.assertFalse(score_utils.checkout_exists(score), "No checkout should exist for {}".format(score))
+
+
 if __name__ == '__main__':
     unittest.main()
