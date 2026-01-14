@@ -127,12 +127,15 @@ class AppWindow(QWidget):
         self.menu = QMenu()
         self.menu.addAction("Reset", self.reset)
         self.menu.addAction("Exit", self.close)
-        self.menu.show()
-        self.menu.hide()
+        # self.menu.show()
+        # self.menu.hide()
         btnMenu.clicked.connect(lambda: self.menu.popup(QPoint(QCursor.pos().x() - self.menu.width(), QCursor.pos().y() - self.menu.height())))
         hLayoutBottom.addWidget(btnMenu)
 
         vLayout.addLayout(hLayoutBottom)
+
+        self.menu.show()
+        self.menu.hide()
 
 
     def reset(self):
