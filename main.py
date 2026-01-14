@@ -128,11 +128,10 @@ class AppWindow(QWidget):
         self.menu.addAction("Reset", self.reset)
         self.menu.addAction("Exit", self.close)
 
-        self.menu.show()
-        mw = self.menu.width()
-        mh = self.menu.height()
-        self.menu.hide()
-        btnMenu.clicked.connect(lambda: self.menu.popup(QPoint(QCursor.pos().x() - mw, QCursor.pos().y() - mh)))
+        h = self.menu.sizeHint()
+        # self.menu.show() # This is a hack that doesn't work everywhere
+        # self.menu.hide()
+        btnMenu.clicked.connect(lambda: self.menu.popup(QPoint(QCursor.pos().x() - h.width(), QCursor.pos().y() - h.height())))
         hLayoutBottom.addWidget(btnMenu)
 
         vLayout.addLayout(hLayoutBottom)
