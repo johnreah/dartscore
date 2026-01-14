@@ -32,6 +32,13 @@ class AppWindow(QWidget):
         stylesheet_player_score_history = "font-size:18pt; font-family: Chalky; background: #333333; color: white;"
         # stylesheet_tab_widget = "QTabBar::tab { width: 300px; height: 50px; font-size: 18px;}"
 
+        # Paint the background of the main window with a wood effect
+        palette = QPalette()
+        pixmap = QPixmap("images/wood.jpg")
+        brush = QBrush(pixmap)
+        palette.setBrush(QPalette.Window, brush)
+        self.setPalette(palette)
+
         #-----------------------------------------------------------------------------
         # Group per-player display elements into an array (dictionary) of named tuples
         #-----------------------------------------------------------------------------
@@ -61,7 +68,6 @@ class AppWindow(QWidget):
         #-------------------
         # Top layout section
         #-------------------
-
         hLayoutTop = QtWidgets.QHBoxLayout()
 
         hLayoutTop.addWidget(self.player_displays[1].name)
@@ -76,7 +82,6 @@ class AppWindow(QWidget):
         #----------------------
         # Middle layout section
         #----------------------
-
         hLayoutMiddle = QHBoxLayout()
 
         # TabWidget is to enable multiple input methods. Not needed for MVP.
@@ -106,7 +111,6 @@ class AppWindow(QWidget):
         #----------------------
         # Bottom layout section
         #----------------------
-
         hLayoutBottom = QHBoxLayout()
 
         self.edStatusBar = QLineEdit()
@@ -124,8 +128,6 @@ class AppWindow(QWidget):
 
     def reset(self):
         [self.player_displays[player].score.setText("501") for player in [1, 2]]
-        self.player_displays[1].led.setPixmap(self.ledPixmapOn)
-        self.player_displays[2].led.setPixmap(self.ledPixmapOff)
         [self.player_displays[player].history.clear() for player in [1, 2]]
         [self.appendHistory(player, self.player_displays[player].score.text()) for player in (1, 2)]
         self.setPlayer(1)
@@ -139,35 +141,24 @@ class AppWindow(QWidget):
         self.player_displays[player_number].history.scrollToBottom()
 
     def setPlayer(self, player_number):
-        if player_number == 1:
-            self.player_to_throw = 1
-            self.player_displays[1].led.setPixmap(self.ledPixmapOn)
-            self.player_displays[2].led.setPixmap(self.ledPixmapOff)
-            self.edStatusBar.setText("Player 1 to throw")
-        elif player_number == 2:
-            self.player_to_throw = 2
-            self.player_displays[1].led.setPixmap(self.ledPixmapOff)
-            self.player_displays[2].led.setPixmap(self.ledPixmapOn)
-            self.edStatusBar.setText("Player 2 to throw")
-        else:
-            raise ValueError("Invalid player number")
+        [self.player_displays[p].led.setPixmap(self.ledPixmapOff) for p in (1, 2)]
+        self.player_to_throw = player_number
+        self.player_displays[player_number].led.setPixmap(self.ledPixmapOn)
+        self.edStatusBar.setText("{} to throw".format(self.player_displays[player_number].name.text()))
+
+    def togglePlayer(self):
+        match self.player_to_throw:
+            case 1: self.setPlayer(2)
+            case 2: self.setPlayer(1)
+            case _: raise ValueError("Invalid player number")
 
     def handleScore(self, score):
         self.debugDimensions()
-        if self.player_to_throw == 1:
-            before = int(self.player_displays[1].score.text())
-            after = before - score
-            self.player_displays[1].score.setText(str(after))
-            self.appendHistory(self.player_to_throw, "{} - {} = {}".format(before, score, after))
-            self.setPlayer(2)
-        elif self.player_to_throw == 2:
-            before = int(self.player_displays[2].score.text())
-            after = before - score
-            self.player_displays[2].score.setText(str(after))
-            self.appendHistory(self.player_to_throw, "{} - {} = {}".format(before, score, after))
-            self.setPlayer(1)
-        else:
-            raise ValueError("Invalid player number")
+        before = int(self.player_displays[self.player_to_throw].score.text())
+        after = before - score
+        self.player_displays[self.player_to_throw].score.setText(str(after))
+        self.appendHistory(self.player_to_throw, "{} - {} = {}".format(before, score, after))
+        self.togglePlayer()
 
     def debugDimensions(self):
         log.debug("window width={} height={}".format(self.width(), self.height()))
@@ -183,14 +174,6 @@ def main():
 
     app = QApplication(sys.argv)
     appWindow = AppWindow()
-
-    # Paint the background of the main window with a wood effect
-    palette = QPalette()
-    pixmap = QPixmap("images/wood.jpg")
-    brush = QBrush(pixmap)
-    palette.setBrush(QPalette.Window, brush)
-    appWindow.setPalette(palette)
-
     appWindow.reset()
 
     if sys.argv[-1] == "fullscreen":
