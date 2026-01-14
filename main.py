@@ -4,10 +4,10 @@ import sys
 from collections import namedtuple
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush
+from PySide6.QtCore import Qt, QSize, QPoint
+from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush, QIcon, QCursor
 from PySide6.QtWidgets import QApplication, QWidget, QTabWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QTextEdit, \
-    QPushButton, QListWidget, QGridLayout, QMainWindow, QLabel, QListWidgetItem
+    QPushButton, QListWidget, QGridLayout, QMainWindow, QLabel, QListWidgetItem, QMenu
 
 from keypadbytotal import KeypadByTotal
 
@@ -118,13 +118,22 @@ class AppWindow(QWidget):
         self.edStatusBar.setText("This is the status bar")
         self.edStatusBar.setReadOnly(True)
         hLayoutBottom.addWidget(self.edStatusBar)
-        btnExit = QPushButton()
-        btnExit.setText("Exit")
-        btnExit.setStyleSheet("font-size: 18px;")
-        btnExit.clicked.connect(lambda: self.close())
-        hLayoutBottom.addWidget(btnExit)
+        
+        btnMenu = QPushButton()
+        btnMenu.setIcon(QIcon("icons/hamburger.png"))
+        btnMenu.setIconSize(QSize(40, 40))
+        btnMenu.setStyleSheet("font-size: 18px;")
+
+        self.menu = QMenu()
+        self.menu.addAction("Reset", self.reset)
+        self.menu.addAction("Exit", self.close)
+        self.menu.show()
+        self.menu.hide()
+        btnMenu.clicked.connect(lambda: self.menu.popup(QPoint(QCursor.pos().x() - self.menu.width(), QCursor.pos().y() - self.menu.height())))
+        hLayoutBottom.addWidget(btnMenu)
 
         vLayout.addLayout(hLayoutBottom)
+
 
     def reset(self):
         [self.player_displays[player].score.setText("501") for player in [1, 2]]
