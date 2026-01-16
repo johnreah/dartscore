@@ -7,8 +7,9 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QSize, QPoint
 from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush, QIcon, QCursor
 from PySide6.QtWidgets import QApplication, QWidget, QTabWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QTextEdit, \
-    QPushButton, QListWidget, QGridLayout, QMainWindow, QLabel, QListWidgetItem, QMenu
+    QPushButton, QListWidget, QGridLayout, QMainWindow, QLabel, QListWidgetItem, QMenu, QDialog
 
+from dialog import Dialog, DialogResult
 from keypadbytotal import KeypadByTotal
 
 log = logging.getLogger(__name__)
@@ -118,20 +119,11 @@ class AppWindow(QWidget):
         self.edStatusBar.setText("This is the status bar")
         self.edStatusBar.setReadOnly(True)
         hLayoutBottom.addWidget(self.edStatusBar)
-        
+
         btnMenu = QPushButton()
-        btnMenu.setIcon(QIcon("icons/settings.png"))
-        btnMenu.setIconSize(QSize(60, 60))
-
-        self.menu = QMenu()
-        self.menu.addAction("Reset", self.reset)
-        self.menu.addAction("Exit", self.close)
-
-        self.menu.show() # This is a hack that doesn't work everywhere
-        h = self.menu.sizeHint()
-        self.menu.hide()
-        btnMenu.clicked.connect(lambda: self.menu.popup(QPoint(QCursor.pos().x() - h.width(), QCursor.pos().y() - h.height())))
-        btnMenu.setStyleSheet("border-style: inset")
+        btnMenu.setText("More...")
+        btnMenu.setStyleSheet("QPushButton { font-family: Verdana; font-size: 36px; background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey); border-style: solid; border-color: firebrick; border-width: 5px; border-radius: 10px; width: 180px}")
+        btnMenu.clicked.connect(lambda: self.on_btnMenu_clicked())
         hLayoutBottom.addWidget(btnMenu)
 
         vLayout.addLayout(hLayoutBottom)
@@ -178,6 +170,23 @@ class AppWindow(QWidget):
         log.debug("ed1.height={}".format(self.player_displays[1].name.height()))
         log.debug("ed2.height={}".format(self.player_displays[2].name.height()))
 
+    def on_btnMenu_clicked(self):
+        dialog = Dialog(self)
+        dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
+        dialog.show()
+
+    def handle_dialog_result(self, result):
+        match result:
+            case DialogResult.OK: log.debug("OK button pressed")
+            case DialogResult.NEW_GAME_P1: self.new_game(1)
+            case DialogResult.NEW_GAME_P2: self.new_game(2)
+            case DialogResult.EXIT: self.close()
+            case _: raise ValueError("Invalid dialog result")
+
+    def new_game(self, player_number):
+        self.reset()
+        self.setPlayer(player_number)
+
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
     log.debug("starting main()")
@@ -197,6 +206,7 @@ def main():
         # appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         appWindow.setGeometry(800, 300, 1280, 720)
         appWindow.show()
+        appWindow.on_btnMenu_clicked()
     sys.exit(app.exec())
 
 if __name__ == '__main__':
