@@ -55,7 +55,7 @@ class Dialog(QDialog):
 
         groupBox = QGroupBox()
         groupBox.setStyleSheet(groupBoxStyle)
-        groupBox.style().polish(groupBox) # hack
+        groupBox.style().polish(groupBox) # hack for raspberry pi
         groupBox.setTitle("Sound Effects")
         vLayout.addWidget(groupBox)
 
@@ -91,13 +91,6 @@ class Dialog(QDialog):
         self.buttonBox.accepted.connect(lambda: self.accept_with_result(DialogResult.OK))
         self.buttonBox.rejected.connect(self.reject)
         vLayout.addWidget(self.buttonBox)
-
-        # groupBox.setStyleSheet("QGroupBox { font-family: Verdana; font-size: 36px; } QCheckBox { font-family: Verdana; font-size: 36px; } QCheckBox::indicator {width: 40px; height: 40px; } QCheckBox::indicator:checked {image: url(icons/checkbox-checked.png); } QCheckBox::indicator:unchecked {image: url(icons/checkbox-unchecked.png); }")
-        # groupBox.style().polish(groupBox) # hack
-        # btnNewGameP1.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
-        # btnNewGameP2.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
-        # btnExit.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
-        # self.buttonBox.setStyleSheet("QWidget { font-family: Verdana; font-size: 18px; }")
 
     def accept_with_result(self, result):
         self.result = result
