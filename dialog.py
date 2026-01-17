@@ -30,7 +30,6 @@ class Dialog(QDialog):
         vLayout.addWidget(groupBox)
 
         groupBoxLayout = QVBoxLayout()
-        groupBox.setStyleSheet("QGroupBox { font-family: Verdana; font-size: 36px; } QCheckBox { font-family: Verdana; font-size: 36px; } QCheckBox::indicator {width: 40px; height: 40px; } QCheckBox::indicator:checked {image: url(icons/settings.png); } QCheckBox::indicator:unchecked {image: url(icons/backspace.png); }")
         checkbox1 = QCheckBox("Enable button clicks")
         groupBoxLayout.addWidget(checkbox1)
         checkbox2 = QCheckBox("Enable text-to-speech")
@@ -59,8 +58,8 @@ class Dialog(QDialog):
         self.buttonBox.rejected.connect(self.reject)
         vLayout.addWidget(self.buttonBox)
 
-        # groupBox.setStyleSheet("QGroupBox { font-family: Verdana; font-size: 36px; } QCheckBox { font-family: Verdana; font-size: 36px; } QCheckBox::indicator {width: 40px; height: 40px; } QCheckBox::indicator:checked {image: url(icons/settings.png); } QCheckBox::indicator:unchecked {image: url(icons/backspace.png); }")
-        # groupBox.style().polish(groupBox) # hack
+        groupBox.setStyleSheet("QGroupBox { font-family: Verdana; font-size: 36px; } QCheckBox { font-family: Verdana; font-size: 36px; } QCheckBox::indicator {width: 40px; height: 40px; } QCheckBox::indicator:checked {image: url(icons/settings.png); } QCheckBox::indicator:unchecked {image: url(icons/backspace.png); }")
+        groupBox.style().polish(groupBox) # hack
         btnNewGameP1.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
         btnNewGameP2.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
         btnExit.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
