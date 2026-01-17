@@ -19,17 +19,43 @@ class Dialog(QDialog):
 
     def __init__(self, parent):
         super().__init__(parent = parent)
+
+        dialogStyle = """
+            QWidget {
+                font-family: Verdana;
+                font-size: 36px;
+            }
+            QPushButton {
+                background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 lightblue);
+                border-style: solid;
+                border-color: #444;
+                border-width: 1px; border-radius: 5px; width: 180px;
+            }
+            """
+
+        groupBoxStyle = """
+            QCheckBox::indicator {
+                width: 40px;
+                height: 40px;
+            }
+            QCheckBox::indicator:checked {
+                image: url(icons/checkbox-checked.png);
+            }
+            QCheckBox::indicator:unchecked {
+                image: url(icons/checkbox-unchecked.png);
+            }
+            """
+
         self.result = None
         self.setModal(True)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.Dialog)
-
-        self.setStyleSheet("QWidget { font-family: Verdana; font-size: 48px; }")
+        self.setStyleSheet(dialogStyle)
 
         vLayout = QVBoxLayout(self)
 
         groupBox = QGroupBox()
-        groupBox.setStyleSheet("QGroupBox { font-family: Verdana; font-size: 36px; } QCheckBox { font-family: Verdana; font-size: 36px; } QCheckBox::indicator {width: 40px; height: 40px; } QCheckBox::indicator:checked {image: url(icons/checkbox-checked.png); } QCheckBox::indicator:unchecked {image: url(icons/checkbox-unchecked.png); }")
-        groupBox.style().polish(groupBox) # hack
+        groupBox.setStyleSheet(groupBoxStyle)
+        # groupBox.style().polish(groupBox) # hack
         groupBox.setTitle("Sound Effects")
         vLayout.addWidget(groupBox)
 
