@@ -63,6 +63,7 @@ class Dialog(QDialog):
         # checkbox2.setStyleSheet("QCheckBox { font-family: Verdana; font-size: 36px; }")
         # checkbox3.setStyleSheet("QCheckBox { font-family: Verdana; font-size: 36px; }")
         # checkbox4.setStyleSheet("QCheckBox { font-family: Verdana; font-size: 36px; }")
+        groupBox.style().polish(groupBox)
         btnNewGameP1.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
         btnNewGameP2.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
         btnExit.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
