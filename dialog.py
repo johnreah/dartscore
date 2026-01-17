@@ -55,7 +55,7 @@ class Dialog(QDialog):
 
         groupBox = QGroupBox()
         groupBox.setStyleSheet(groupBoxStyle)
-        # groupBox.style().polish(groupBox) # hack
+        groupBox.style().polish(groupBox) # hack
         groupBox.setTitle("Sound Effects")
         vLayout.addWidget(groupBox)
 
