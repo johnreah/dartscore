@@ -210,7 +210,7 @@ def main():
         # Dreadful hack to force dialog to work out its styles before first use
         dialog = Dialog(appWindow)
         dialog.show()
-        dialog.close()
+        dialog.hide()
         appWindow.on_btnMenu_clicked()
 
     sys.exit(app.exec())
