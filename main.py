@@ -174,8 +174,8 @@ class AppWindow(QWidget):
         dialog = Dialog(self)
         dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
         dialog.show()
-        dialog.hide()
-        dialog.show()
+        # dialog.hide()
+        # dialog.show()
 
     def handle_dialog_result(self, result):
         match result:
