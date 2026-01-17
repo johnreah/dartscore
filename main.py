@@ -207,10 +207,12 @@ def main():
         appWindow.setGeometry(800, 300, 1280, 720)
         appWindow.show()
 
+        # Dreadful hack to force dialog to work out its styles before first use
         dialog = Dialog(appWindow)
         dialog.show()
-        dialog.hide()
-        # appWindow.on_btnMenu_clicked()
+        dialog.close()
+        appWindow.on_btnMenu_clicked()
+
     sys.exit(app.exec())
 
 if __name__ == '__main__':
