@@ -10,22 +10,26 @@ log = logging.getLogger(__name__)
 class DialogResult(Enum):
     OK = auto()
     CANCEL = auto()
-    EXIT = auto()
     NEW_GAME_P1 = auto()
     NEW_GAME_P2 = auto()
+    RESET = auto()
+    EXIT = auto()
 
 class Dialog(QDialog):
 
     def __init__(self, parent):
         super().__init__(parent = parent)
         self.result = None
-
         self.setModal(True)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.Dialog)
+
+        self.setStyleSheet("QWidget { font-family: Verdana; font-size: 48px; }")
 
         vLayout = QVBoxLayout(self)
 
         groupBox = QGroupBox()
+        groupBox.setStyleSheet("QGroupBox { font-family: Verdana; font-size: 36px; } QCheckBox { font-family: Verdana; font-size: 36px; } QCheckBox::indicator {width: 40px; height: 40px; } QCheckBox::indicator:checked {image: url(icons/checkbox-checked.png); } QCheckBox::indicator:unchecked {image: url(icons/checkbox-unchecked.png); }")
+        groupBox.style().polish(groupBox) # hack
         groupBox.setTitle("Sound Effects")
         vLayout.addWidget(groupBox)
 
@@ -48,6 +52,10 @@ class Dialog(QDialog):
         btnNewGameP2.clicked.connect(lambda: self.accept_with_result(DialogResult.NEW_GAME_P2))
         vLayout.addWidget(btnNewGameP2)
 
+        btnReset = QPushButton("Reset everything")
+        btnReset.clicked.connect(lambda: self.accept_with_result(DialogResult.RESET))
+        vLayout.addWidget(btnReset)
+
         btnExit = QPushButton("Exit")
         btnExit.clicked.connect(lambda: self.accept_with_result(DialogResult.EXIT))
         vLayout.addWidget(btnExit)
@@ -58,12 +66,12 @@ class Dialog(QDialog):
         self.buttonBox.rejected.connect(self.reject)
         vLayout.addWidget(self.buttonBox)
 
-        groupBox.setStyleSheet("QGroupBox { font-family: Verdana; font-size: 36px; } QCheckBox { font-family: Verdana; font-size: 36px; } QCheckBox::indicator {width: 40px; height: 40px; } QCheckBox::indicator:checked {image: url(icons/checkbox-checked.png); } QCheckBox::indicator:unchecked {image: url(icons/checkbox-unchecked.png); }")
-        groupBox.style().polish(groupBox) # hack
-        btnNewGameP1.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
-        btnNewGameP2.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
-        btnExit.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
-        self.buttonBox.setStyleSheet("QWidget { font-family: Verdana; font-size: 48px; }")
+        # groupBox.setStyleSheet("QGroupBox { font-family: Verdana; font-size: 36px; } QCheckBox { font-family: Verdana; font-size: 36px; } QCheckBox::indicator {width: 40px; height: 40px; } QCheckBox::indicator:checked {image: url(icons/checkbox-checked.png); } QCheckBox::indicator:unchecked {image: url(icons/checkbox-unchecked.png); }")
+        # groupBox.style().polish(groupBox) # hack
+        # btnNewGameP1.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
+        # btnNewGameP2.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
+        # btnExit.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
+        # self.buttonBox.setStyleSheet("QWidget { font-family: Verdana; font-size: 18px; }")
 
     def accept_with_result(self, result):
         self.result = result

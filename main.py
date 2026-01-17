@@ -51,7 +51,6 @@ class AppWindow(QWidget):
             self.player_displays[player].name.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
             self.player_displays[player].name.setFixedHeight(60)
             self.player_displays[player].name.setMinimumWidth(300)
-            self.player_displays[player].name.setText("Player {}".format(player))
 
             self.player_displays[player].score.setStyleSheet(stylesheet_player_score)
             self.player_displays[player].score.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
@@ -128,14 +127,17 @@ class AppWindow(QWidget):
 
         vLayout.addLayout(hLayoutBottom)
 
-
-    def reset(self):
+    def reset_scores(self):
         [self.player_displays[player].score.setText("501") for player in [1, 2]]
         [self.player_displays[player].history.clear() for player in [1, 2]]
         [self.appendHistory(player, self.player_displays[player].score.text()) for player in (1, 2)]
         self.setPlayer(1)
         if self.player_to_throw == 1 and self.player_displays[1].score.text() == "501":
             self.edStatusBar.setText("Player 1 to throw. Enter score using keypad and press green Enter button when done.")
+
+    def reset_everything(self):
+        [self.player_displays[player].name.setText("Player {}".format(player)) for player in (1, 2)]
+        self.reset_scores()
 
     def appendHistory(self, player_number, itemString):
         item = QListWidgetItem(itemString)
@@ -180,11 +182,12 @@ class AppWindow(QWidget):
             case DialogResult.OK: log.debug("OK button pressed")
             case DialogResult.NEW_GAME_P1: self.new_game(1)
             case DialogResult.NEW_GAME_P2: self.new_game(2)
+            case DialogResult.RESET: self.reset_everything()
             case DialogResult.EXIT: self.close()
             case _: raise ValueError("Invalid dialog result")
 
     def new_game(self, player_number):
-        self.reset()
+        self.reset_scores()
         self.setPlayer(player_number)
 
 def main():
@@ -194,7 +197,7 @@ def main():
 
     app = QApplication(sys.argv)
     appWindow = AppWindow()
-    appWindow.reset()
+    appWindow.reset_everything()
 
     if sys.argv[-1] == "fullscreen":
         log.debug("starting in full-screen (release) mode")
@@ -206,7 +209,6 @@ def main():
         # appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         appWindow.setGeometry(800, 300, 1280, 720)
         appWindow.show()
-        appWindow.on_btnMenu_clicked()
 
     sys.exit(app.exec())
 
