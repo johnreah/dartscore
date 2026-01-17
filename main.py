@@ -174,6 +174,8 @@ class AppWindow(QWidget):
         dialog = Dialog(self)
         dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
         dialog.show()
+        dialog.hide()
+        dialog.show()
 
     def handle_dialog_result(self, result):
         match result:
@@ -206,11 +208,6 @@ def main():
         # appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         appWindow.setGeometry(800, 300, 1280, 720)
         appWindow.show()
-
-        # Dreadful hack to force dialog to work out its styles before first use
-        dialog = Dialog(appWindow)
-        dialog.show()
-        dialog.hide()
         # appWindow.on_btnMenu_clicked()
 
     sys.exit(app.exec())
