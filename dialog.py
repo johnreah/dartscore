@@ -59,11 +59,7 @@ class Dialog(QDialog):
         vLayout.addWidget(self.buttonBox)
 
         groupBox.setStyleSheet("QGroupBox { font-family: Verdana; font-size: 36px; } QCheckBox { font-family: Verdana; font-size: 36px; } QCheckBox::indicator {width: 40px; height: 40px; } QCheckBox::indicator:checked {image: url(icons/settings.png); } QCheckBox::indicator:unchecked {image: url(icons/backspace.png); }")
-        # checkbox1.setStyleSheet("QCheckBox { font-family: Verdana; font-size: 36px; } QCheckBox::indicator {width: 36px; height: 36px; } QCheckBox::indicator:checked {image: url(icons/settings.png); } QCheckBox::indicator:unchecked {image: url(icons/backspace.png); }")
-        # checkbox2.setStyleSheet("QCheckBox { font-family: Verdana; font-size: 36px; }")
-        # checkbox3.setStyleSheet("QCheckBox { font-family: Verdana; font-size: 36px; }")
-        # checkbox4.setStyleSheet("QCheckBox { font-family: Verdana; font-size: 36px; }")
-        groupBox.style().polish(groupBox)
+        groupBox.style().polish(groupBox) # hack
         btnNewGameP1.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
         btnNewGameP2.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
         btnExit.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
