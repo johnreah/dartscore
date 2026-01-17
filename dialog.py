@@ -68,8 +68,8 @@ class Dialog(QDialog):
         btnExit.setStyleSheet("QPushButton { font-family: Verdana; font-size: 48px; }")
         self.buttonBox.setStyleSheet("QWidget { font-family: Verdana; font-size: 48px; }")
 
-        # self.show()
-        # self.hide()
+        self.show()
+        self.hide()
 
     def accept_with_result(self, result):
         self.result = result
