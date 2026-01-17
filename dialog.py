@@ -59,7 +59,7 @@ class Dialog(QDialog):
         vLayout.addWidget(self.buttonBox)
 
         groupBox.setStyleSheet("QGroupBox { font-family: Verdana; font-size: 36px; }")
-        checkbox1.setStyleSheet("QCheckBox { font-family: Verdana; font-size: 36px; }")
+        checkbox1.setStyleSheet("QCheckBox { font-family: Verdana; font-size: 36px; } QCheckBox::indicator {width: 60px; height: 60px; transform: scale(2);} ")
         checkbox2.setStyleSheet("QCheckBox { font-family: Verdana; font-size: 36px; }")
         checkbox3.setStyleSheet("QCheckBox { font-family: Verdana; font-size: 36px; }")
         checkbox4.setStyleSheet("QCheckBox { font-family: Verdana; font-size: 36px; }")
