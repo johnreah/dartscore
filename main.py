@@ -211,7 +211,7 @@ def main():
         dialog = Dialog(appWindow)
         dialog.show()
         dialog.hide()
-        appWindow.on_btnMenu_clicked()
+        # appWindow.on_btnMenu_clicked()
 
     sys.exit(app.exec())
 
