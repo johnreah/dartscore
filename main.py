@@ -206,7 +206,7 @@ def main():
         # appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         appWindow.setGeometry(800, 300, 1280, 720)
         appWindow.show()
-        appWindow.on_btnMenu_clicked()
+        # appWindow.on_btnMenu_clicked()
     sys.exit(app.exec())
 
 if __name__ == '__main__':
