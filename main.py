@@ -122,7 +122,7 @@ class AppWindow(QWidget):
 
         btnMenu = QPushButton()
         btnMenu.setText("More...")
-        btnMenu.setStyleSheet("QPushButton { font-family: Verdana; font-size: 36px; background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey); border-style: solid; border-color: firebrick; border-width: 5px; border-radius: 10px; width: 180px}")
+        btnMenu.setStyleSheet("QPushButton { font-family: Verdana; font-size: 36px; background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey); border-style: solid; border-color: #888; border-width: 5px; border-radius: 10px; width: 180px}")
         btnMenu.clicked.connect(lambda: self.on_btnMenu_clicked())
         hLayoutBottom.addWidget(btnMenu)
 
