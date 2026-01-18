@@ -1,14 +1,46 @@
 import logging
 import sys
+import os
+import random
+import threading
 from enum import Enum, auto
 
-from PySide6.QtCore import Qt, QSize, Signal
+import pyttsx3
+
+from PySide6.QtCore import Qt, QSize, Signal, QUrl, QThread
 from PySide6.QtGui import QPalette, QColor, QIcon
+from PySide6.QtMultimedia import QSoundEffect
 from PySide6.QtWidgets import (
     QApplication, QWidget, QLineEdit, QPushButton, QSizePolicy
 )
 
 log = logging.getLogger(__name__)
+
+class TTSThread(QThread):
+    """Thread for running text-to-speech without blocking UI"""
+    
+    def __init__(self, text, engine, lock):
+        super().__init__()
+        self.text = text
+        self.engine = engine
+        self.lock = lock
+        self.error_occurred = False
+    
+    def run(self):
+        if self.engine:
+            with self.lock:
+                try:
+                    # Try to stop any pending speech first
+                    try:
+                        self.engine.stop()
+                    except:
+                        pass
+                    self.engine.say(self.text)
+                    self.engine.runAndWait()
+                except Exception as e:
+                    log.warning(f"TTS error: {e}")
+                    # Signal that engine needs reset
+                    self.error_occurred = True
 
 class KeypadCommand(Enum):
     DIGIT = auto()
@@ -30,6 +62,39 @@ class KeypadByTotal(QWidget):
         self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.setFixedWidth(HPAD * 2 + W * 4)
         self.setFixedHeight(VPAD * 3 + DISPH + H * 4)
+
+        # Initialize multiple sound effects for button clicks (for variety)
+        self.click_sounds = []
+        sounds_dir = os.path.join(os.path.dirname(__file__), "sounds")
+        
+        # Load all 10 key samples
+        for i in range(1, 11):
+            sound_effect = QSoundEffect()
+            sound_path = os.path.join(sounds_dir, f"key_sample_{i}.wav")
+            if os.path.exists(sound_path):
+                sound_effect.setSource(QUrl.fromLocalFile(sound_path))
+                sound_effect.setVolume(0.6)
+                self.click_sounds.append(sound_effect)
+        
+        log.debug(f"Loaded {len(self.click_sounds)} key sound samples")
+        
+        # Initialize single persistent text-to-speech engine
+        self.tts_engine = None
+        self.tts_lock = threading.Lock()
+        self.tts_threads = []  # Keep references to threads
+        try:
+            self.tts_engine = pyttsx3.init()
+            voices = self.tts_engine.getProperty('voices')
+            # Try to find a British English voice
+            for voice in voices:
+                if 'en_GB' in voice.id or 'english-uk' in voice.id.lower() or 'daniel' in voice.name.lower():
+                    self.tts_engine.setProperty('voice', voice.id)
+                    log.debug(f"Using voice: {voice.name}")
+                    break
+            self.tts_engine.setProperty('rate', 150)
+        except Exception as e:
+            log.warning(f"Failed to initialize TTS engine: {e}")
+            self.tts_engine = None
 
         # Paint background blue - handy when experimenting with layouts
         # self.setAutoFillBackground(True)
@@ -98,6 +163,11 @@ class KeypadByTotal(QWidget):
 
     def on_button_click(self, command, payload = None):
         log.debug("Command={} payload={}".format(command, payload))
+        
+        # Play random click sound for all button presses (adds variety)
+        if self.click_sounds:
+            random.choice(self.click_sounds).play()
+        
         input = self.display.text()
         if command == KeypadCommand.DIGIT:
             input += payload
@@ -107,9 +177,59 @@ class KeypadByTotal(QWidget):
                 input = "0"
         if command == KeypadCommand.ENTER:
             log.debug("Entered {}".format(input))
-            self.total_entered.emit(int(input))
+            score_value = int(input)
+            self.total_entered.emit(score_value)
+            # Speak the score out loud using macOS text-to-speech
+            self.speak_score(score_value)
             input = "0"
         self.display.setText(str(int(input)))
+    
+    def speak_score(self, score):
+        """Use cross-platform text-to-speech to announce the score in a background thread"""
+        if self.tts_engine:
+            # Clean up finished threads and check for errors
+            finished_threads = [t for t in self.tts_threads if not t.isRunning()]
+            for t in finished_threads:
+                if hasattr(t, 'error_occurred') and t.error_occurred:
+                    log.warning("TTS engine error detected, reinitializing...")
+                    self.reinitialize_tts()
+                    break
+            self.tts_threads = [t for t in self.tts_threads if t.isRunning()]
+            
+            # Skip if there's already a TTS running (prevents queue buildup)
+            if len(self.tts_threads) > 0:
+                log.debug(f"Skipping TTS for {score}, already speaking")
+                return
+            
+            # Create and start new thread with shared engine
+            tts_thread = TTSThread(str(score), self.tts_engine, self.tts_lock)
+            tts_thread.finished.connect(lambda: log.debug("TTS finished"))
+            self.tts_threads.append(tts_thread)
+            tts_thread.start()
+    
+    def reinitialize_tts(self):
+        """Reinitialize TTS engine after error"""
+        try:
+            # Stop and delete old engine
+            if self.tts_engine:
+                try:
+                    self.tts_engine.stop()
+                except:
+                    pass
+                del self.tts_engine
+            
+            # Create new engine
+            self.tts_engine = pyttsx3.init()
+            voices = self.tts_engine.getProperty('voices')
+            for voice in voices:
+                if 'en_GB' in voice.id or 'english-uk' in voice.id.lower() or 'daniel' in voice.name.lower():
+                    self.tts_engine.setProperty('voice', voice.id)
+                    break
+            self.tts_engine.setProperty('rate', 150)
+            log.info("TTS engine reinitialized successfully")
+        except Exception as e:
+            log.error(f"Failed to reinitialize TTS engine: {e}")
+            self.tts_engine = None
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
