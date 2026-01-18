@@ -4,21 +4,24 @@ import sys
 from collections import namedtuple
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import Qt, QSize, QPoint
-from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush, QIcon, QCursor
-from PySide6.QtWidgets import QApplication, QWidget, QTabWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QTextEdit, \
-    QPushButton, QListWidget, QGridLayout, QMainWindow, QLabel, QListWidgetItem, QMenu, QDialog
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush
+from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QListWidget, \
+    QGridLayout, QLabel, QListWidgetItem
 
-from dialog import Dialog, DialogResult
+from dialog import DialogResult
 from keypadbytotal import KeypadByTotal
+from tts import TTS
 
 log = logging.getLogger(__name__)
 
 class AppWindow(QWidget):
-    player_to_throw = None
 
     def __init__(self):
         super().__init__()
+
+        self.player_to_throw = None
+        self.tts = TTS()
 
         #----------------------------------------------------------------------------
         # Prepare resources (fonts, bitmaps, stylesheets) before building main window
@@ -173,9 +176,11 @@ class AppWindow(QWidget):
         log.debug("ed2.height={}".format(self.player_displays[2].name.height()))
 
     def on_btnMenu_clicked(self):
-        dialog = Dialog(self)
-        dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
-        dialog.show()
+        # dialog = Dialog(self)
+        # dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
+        # dialog.show()
+        self.tts.say("One hundred and seventy-seven")
+        self.tts.say("John, you require 99")
 
     def handle_dialog_result(self, result):
         match result:
