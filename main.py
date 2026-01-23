@@ -11,7 +11,7 @@ from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QHBoxLayout, QVB
 
 from dialog import DialogResult
 from keypadbytotal import KeypadByTotal
-from tts import TTS
+from tts import TTS, TTSThreaded, TTSWorker, TTSPiper
 
 log = logging.getLogger(__name__)
 
@@ -21,7 +21,8 @@ class AppWindow(QWidget):
         super().__init__()
 
         self.player_to_throw = None
-        self.tts = TTS()
+        self.tts = TTSPiper()
+        # self.tts.start()
 
         #----------------------------------------------------------------------------
         # Prepare resources (fonts, bitmaps, stylesheets) before building main window
@@ -196,7 +197,7 @@ class AppWindow(QWidget):
         self.setPlayer(player_number)
 
 def main():
-    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     log.debug("starting main()")
     log.debug(os.path.dirname(__file__))
 
