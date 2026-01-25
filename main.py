@@ -2,6 +2,7 @@ import logging
 import os
 import sys
 from collections import namedtuple
+from time import sleep
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
@@ -130,6 +131,11 @@ class AppWindow(QWidget):
         hLayoutBottom.addWidget(btnMenu)
 
         vLayout.addLayout(hLayoutBottom)
+
+    def closeEvent(self, event):
+        self.tts.shutdown()
+        # sleep(4.0)
+        event.accept()
 
     def reset_scores(self):
         [self.player_displays[player].score.setText("501") for player in [1, 2]]

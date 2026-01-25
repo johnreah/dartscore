@@ -159,29 +159,54 @@ class TTSWorker(threading.Thread):
 class TTSPiper():
 
     def __init__(self):
-        self.thread = TTSPiperThread()
+        self.thread = QThread()
+        self.worker = TTSPiperWorker()
+        self.worker.moveToThread(self.thread)
+        self.worker.terminated.connect(self.thread.quit)
+        self.worker.terminated.connect(self.worker.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+        self.worker.terminated.connect(lambda: print("TTS worker terminated"))
+        self.thread.started.connect(self.worker.run)
         self.thread.start()
 
     def say(self, text):
-        self.thread.queue_text(text)
+        self.worker.queue.put(text)
 
-class TTSPiperThread(QThread):
+    def stop(self):
+        pass
 
-    finished = Signal()
+    def shutdown(self):
+        print("requesting interruption")
+        self.thread.requestInterruption()
+        self.thread.quit()
+        self.thread.wait()
+
+class TTSPiperWorker(QObject):
+    terminated = Signal()
     error = Signal(str)
 
     def __init__(self):
         super().__init__()
         self.queue = queue.Queue()
-        self.voice = PiperVoice.load(os.path.join(os.path.dirname(__file__), "voices/en_GB-alba-medium.onnx"))
-
-    def queue_text(self, text):
-        self.queue.put(text)
 
     def run(self):
-        while True:
-            try:
-                text = self.queue.get()
+        try:
+            self.voice = PiperVoice.load(os.path.join(os.path.dirname(__file__), "voices/en_GB-alba-medium.onnx"))
+            while True:
+                text = None
+                try:
+                    print("Waiting for text from queue...")
+                    text = self.queue.get(block=True, timeout=0.2)
+                except queue.Empty as e:
+                    pass
+
+                if QThread.currentThread().isInterruptionRequested():
+                    print("Queue get interrupted")
+                    self.terminated.emit()
+                    return
+                elif text is None:
+                    continue
+
                 wav_buffer = io.BytesIO()
                 with wave.open(wav_buffer, 'wb') as wav_file:
                     wav_file.setnchannels(1)  # Piper outputs mono audio
@@ -196,12 +221,11 @@ class TTSPiperThread(QThread):
                     frames = wav_file.readframes(wav_file.getnframes())
                     audio_array = np.frombuffer(frames, dtype=np.int16)
 
-                log.debug(f"Playing {len(audio_array)} samples at {sample_rate} Hz...")
+                print(f"Playing {len(audio_array)} samples at {sample_rate} Hz...")
                 sd.play(audio_array, samplerate=sample_rate)
                 sd.wait()
                 log.debug("Playback complete!")
-                self.finished.emit()
 
-            except Exception as e:
-                log.error(f"Error in TTS thread: {e}")
-                self.error.emit(str(e))
+        except Exception as e:
+            log.error(f"Error in TTS thread: {e}")
+            self.error.emit(str(e))
