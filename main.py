@@ -15,6 +15,7 @@ from keypadbytotal import KeypadByTotal
 from tts import TTS, TTSThreaded, TTSWorker, TTSPiper
 
 log = logging.getLogger(__name__)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 class AppWindow(QWidget):
 
@@ -203,7 +204,6 @@ class AppWindow(QWidget):
         self.setPlayer(player_number)
 
 def main():
-    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     log.debug("starting main()")
     log.debug(os.path.dirname(__file__))
 

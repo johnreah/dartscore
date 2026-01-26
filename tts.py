@@ -2,6 +2,7 @@ import logging
 import os
 import queue
 import io
+import sys
 import threading
 import wave
 import numpy as np
@@ -11,6 +12,7 @@ from PySide6.QtCore import QObject, QTimer, QThread, Signal
 from piper import PiperVoice
 
 log = logging.getLogger(__name__)
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 #----------------------------------------------------------------------------
 # pyttsx3 co-operative multi-tasking
@@ -176,7 +178,7 @@ class TTSPiper():
         pass
 
     def shutdown(self):
-        print("requesting interruption")
+        log.debug("requesting interruption")
         self.thread.requestInterruption()
         self.thread.quit()
         self.thread.wait()
@@ -195,13 +197,12 @@ class TTSPiperWorker(QObject):
             while True:
                 text = None
                 try:
-                    print("Waiting for text from queue...")
                     text = self.queue.get(block=True, timeout=0.2)
                 except queue.Empty as e:
                     pass
 
                 if QThread.currentThread().isInterruptionRequested():
-                    print("Queue get interrupted")
+                    log.debug("Queue get interrupted")
                     self.terminated.emit()
                     return
                 elif text is None:
@@ -221,9 +222,10 @@ class TTSPiperWorker(QObject):
                     frames = wav_file.readframes(wav_file.getnframes())
                     audio_array = np.frombuffer(frames, dtype=np.int16)
 
-                print(f"Playing {len(audio_array)} samples at {sample_rate} Hz...")
-                sd.play(audio_array, samplerate=sample_rate)
-                sd.wait()
+                log.debug(f"Playing {len(audio_array)} samples at {sample_rate} Hz...")
+                audio_frames = audio_array.reshape(-1, 1)  # (frames, channels) for mono
+                with sd.OutputStream(samplerate=sample_rate, channels=1, dtype="int16") as stream:
+                    stream.write(audio_frames)
                 log.debug("Playback complete!")
 
         except Exception as e:
