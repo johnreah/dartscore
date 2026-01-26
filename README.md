@@ -19,6 +19,22 @@ them for your own environment.
     python main.py
 
 ### Design notes
+This started as a quick Christmas holiday project and was triggered partly by the
+World Darts Championship that was happening at the time and partly by my partner
+giving me a dartboard (to replace the one I lent my brother 15 years ago and
+haven't seen since). The UI design was inspired by a pub darts scoreboard I
+used to use about 20 years ago, and the choice of target hardware was heavily
+influenced by what was in my box of single board computers that included a
+Raspberry Pi 3B (the earliest wi-fi model). I added the official 7" touch
+display out of curiosity. Software-wise I picked Python because of the rapid
+edit/debug cycle, and Qt because it's cross-platform and I wanted to learn it.
+
+The visual aspect of the UI came together quite quickly, and the "business logic"
+isn't too complicated. The vast majority of the development effort was 
+necessitated by a pull request made by my pal Chris who had used his assistant
+Claude to add button click sounds and some text-to-speech features. This wasn't 
+part of my original plan, as my Pi has no sound output device, but once the 
+challenge had been laid down I couldn't very well say no. This was a big mistake.
 
 ### Python notes
 [Python tutorial on virtual environments and Packages](https://docs.python.org/3/tutorial/venv.html)
@@ -64,4 +80,8 @@ https://share.google/iP07d78l5hV7fZdEh
 http://neatnik.net/adam/bucket/numeric-keypad-iie/
 
 https://www.keyboard-layout-editor.com/
+
+https://www.youtube.com/watch?v=BAx4N4QtkeY
+
+https://python-sounddevice.readthedocs.io/en/0.5.3/usage.html
 
