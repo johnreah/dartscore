@@ -2,7 +2,6 @@ import logging
 import os
 import sys
 from collections import namedtuple
-from time import sleep
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
@@ -10,9 +9,10 @@ from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush
 from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QListWidget, \
     QGridLayout, QLabel, QListWidgetItem
 
-from dialog import DialogResult
+import score_utils
 from keypadbytotal import KeypadByTotal
-from tts import TTS, TTSThreaded, TTSWorker, TTSPiper
+from prefs_dialog import DialogResult, PrefsDialog
+from tts import TTSPiper
 
 log = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -135,7 +135,6 @@ class AppWindow(QWidget):
 
     def closeEvent(self, event):
         self.tts.shutdown()
-        # sleep(4.0)
         event.accept()
 
     def reset_scores(self):
@@ -167,14 +166,24 @@ class AppWindow(QWidget):
             case 1: self.setPlayer(2)
             case 2: self.setPlayer(1)
             case _: raise ValueError("Invalid player number")
+        score_remaining = int(self.player_displays[self.player_to_throw].score.text())
+        if score_utils.checkout_exists(score_remaining):
+            self.tts.say("{} you require {}".format(self.player_displays[self.player_to_throw].name.text(), score_remaining))
+            self.edStatusBar.setText("Suggested checkout: " + " or ".join(score_utils.suggested_checkouts(score_remaining)))
 
     def handleScore(self, score):
-        self.debugDimensions()
         before = int(self.player_displays[self.player_to_throw].score.text())
         after = before - score
-        self.player_displays[self.player_to_throw].score.setText(str(after))
-        self.appendHistory(self.player_to_throw, "{} - {} = {}".format(before, score, after))
-        self.togglePlayer()
+        if score_utils.is_valid_score(score) and after >= 0 and after != 1:
+            self.tts.say(str(score))
+            if after == 0:
+                self.tts.say("Game shot!")
+            self.player_displays[self.player_to_throw].score.setText(str(after))
+            self.appendHistory(self.player_to_throw, "{} - {} = {}".format(before, score, after))
+            self.togglePlayer()
+        else:
+            self.tts.say("Invalid score")
+            self.edStatusBar.setText("Invalid score. Try again.")
 
     def debugDimensions(self):
         log.debug("window width={} height={}".format(self.width(), self.height()))
@@ -184,11 +193,9 @@ class AppWindow(QWidget):
         log.debug("ed2.height={}".format(self.player_displays[2].name.height()))
 
     def on_btnMenu_clicked(self):
-        # dialog = Dialog(self)
-        # dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
-        # dialog.show()
-        self.tts.say("One hundred and seventy-seven")
-        self.tts.say("John, you require 99")
+        dialog = PrefsDialog(self)
+        dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
+        dialog.show()
 
     def handle_dialog_result(self, result):
         match result:

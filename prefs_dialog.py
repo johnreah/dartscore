@@ -15,7 +15,7 @@ class DialogResult(Enum):
     RESET = auto()
     EXIT = auto()
 
-class Dialog(QDialog):
+class PrefsDialog(QDialog):
 
     def __init__(self, parent):
         super().__init__(parent = parent)
