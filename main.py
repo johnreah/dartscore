@@ -11,6 +11,7 @@ from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QHBoxLayout, QVB
 
 import score_utils
 from keypadbytotal import KeypadByTotal
+from preferences import Preferences
 from prefs_dialog import DialogResult, PrefsDialog
 from tts import TTSPiper
 
@@ -24,7 +25,7 @@ class AppWindow(QWidget):
 
         self.player_to_throw = None
         self.tts = TTSPiper()
-        # self.tts.start()
+        self.prefs = Preferences()
 
         #----------------------------------------------------------------------------
         # Prepare resources (fonts, bitmaps, stylesheets) before building main window
@@ -168,21 +169,24 @@ class AppWindow(QWidget):
             case _: raise ValueError("Invalid player number")
         score_remaining = int(self.player_displays[self.player_to_throw].score.text())
         if score_utils.checkout_exists(score_remaining):
-            self.tts.say("{} you require {}".format(self.player_displays[self.player_to_throw].name.text(), score_remaining))
+            if self.prefs.tts_say_score_required:
+                self.tts.say("{} you require {}".format(self.player_displays[self.player_to_throw].name.text(), score_remaining))
             self.edStatusBar.setText("Suggested checkout: " + " or ".join(score_utils.suggested_checkouts(score_remaining)))
 
     def handleScore(self, score):
         before = int(self.player_displays[self.player_to_throw].score.text())
         after = before - score
         if score_utils.is_valid_score(score) and after >= 0 and after != 1:
-            self.tts.say(str(score))
-            if after == 0:
-                self.tts.say("Game shot!")
+            if self.prefs.tts_say_totals:
+                self.tts.say(str(score))
+                if after == 0:
+                    self.tts.say("Game shot!")
             self.player_displays[self.player_to_throw].score.setText(str(after))
             self.appendHistory(self.player_to_throw, "{} - {} = {}".format(before, score, after))
             self.togglePlayer()
         else:
-            self.tts.say("Invalid score")
+            if self.prefs.tts_say_totals:
+                self.tts.say("Invalid score")
             self.edStatusBar.setText("Invalid score. Try again.")
 
     def debugDimensions(self):
