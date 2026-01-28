@@ -197,7 +197,7 @@ class AppWindow(QWidget):
         log.debug("ed2.height={}".format(self.player_displays[2].name.height()))
 
     def on_btnMenu_clicked(self):
-        dialog = PrefsDialog(self)
+        dialog = PrefsDialog(self, self.prefs)
         dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
         dialog.show()
 
