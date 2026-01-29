@@ -230,7 +230,7 @@ def main():
     else:
         log.debug("starting in windowed (debug) mode")
         appWindow.setWindowTitle("Darts Scoreboard")
-        # appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         appWindow.setGeometry(800, 300, 1280, 720)
         appWindow.show()
 
