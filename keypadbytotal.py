@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
 )
 
 from playsound import playsound
+from preferences import Preferences
 
 log = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -21,8 +22,9 @@ class KeypadCommand(Enum):
 class KeypadByTotal(QWidget):
     total_entered = Signal(int)
 
-    def __init__(self):
+    def __init__(self, prefs: Preferences):
         super().__init__()
+        self.prefs = prefs
 
         HPAD = 10
         VPAD = 10
@@ -117,10 +119,12 @@ class KeypadByTotal(QWidget):
         self.display.setText(str(int(input)))
 
     def on_button_pressed(self):
-        playsound("key-down.wav")
+        if self.prefs.sound_button_clicks:
+            playsound("key-down.wav")
 
     def on_button_released(self):
-        playsound("key-up.wav")
+        if self.prefs.sound_button_clicks:
+            playsound("key-up.wav")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

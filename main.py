@@ -97,7 +97,7 @@ class AppWindow(QWidget):
         # tabWidget.addTab(KeypadByDart(), "By Dart")
         # tabWidget.setStyleSheet(stylesheet_tab_widget)
 
-        keypadbytotal = KeypadByTotal()
+        keypadbytotal = KeypadByTotal(self.prefs)
         keypadbytotal.total_entered.connect(lambda total: self.handleScore(total))
 
         # Use grid layout for a single centred keypad. Replace with TabWidget later.
@@ -177,13 +177,14 @@ class AppWindow(QWidget):
         before = int(self.player_displays[self.player_to_throw].score.text())
         after = before - score
         if score_utils.is_valid_score(score) and after >= 0 and after != 1:
+            self.player_displays[self.player_to_throw].score.setText(str(after))
+            self.appendHistory(self.player_to_throw, "{} - {} = {}".format(before, score, after))
             if self.prefs.tts_say_totals:
                 self.tts.say(str(score))
                 if after == 0:
                     self.tts.say("Game shot!")
-            self.player_displays[self.player_to_throw].score.setText(str(after))
-            self.appendHistory(self.player_to_throw, "{} - {} = {}".format(before, score, after))
-            self.togglePlayer()
+            if after > 0:
+                self.togglePlayer()
         else:
             if self.prefs.tts_say_totals:
                 self.tts.say("Invalid score")
