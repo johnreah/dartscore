@@ -3,12 +3,15 @@ import sys
 from enum import Enum, auto
 
 from PySide6.QtCore import Qt, QSize, Signal
-from PySide6.QtGui import QPalette, QColor, QIcon
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
     QApplication, QWidget, QLineEdit, QPushButton, QSizePolicy
 )
 
+from playsound import playsound
+
 log = logging.getLogger(__name__)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 class KeypadCommand(Enum):
     DIGIT = auto()
@@ -90,6 +93,8 @@ class KeypadByTotal(QWidget):
         button.setStyleSheet(styleSheet)
         button.setGeometry(x, y, w, h)
         command_payload = text if text.isdigit() else None
+        button.pressed.connect(self.on_button_pressed)
+        button.released.connect(self.on_button_released)
         button.clicked.connect(lambda: self.on_button_click(command, command_payload))
         if icon is not None:
             button.setIcon(QIcon(icon))
@@ -110,6 +115,12 @@ class KeypadByTotal(QWidget):
             self.total_entered.emit(int(input))
             input = "0"
         self.display.setText(str(int(input)))
+
+    def on_button_pressed(self):
+        playsound("key-down.wav")
+
+    def on_button_released(self):
+        playsound("key-up.wav")
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
