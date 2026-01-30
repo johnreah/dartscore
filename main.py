@@ -4,10 +4,10 @@ import sys
 from collections import namedtuple
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush, QGuiApplication, QInputDevice
 from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QListWidget, \
-    QGridLayout, QLabel, QListWidgetItem
+    QGridLayout, QLabel, QListWidgetItem, QMessageBox
 
 import score_utils
 from keypadbytotal import KeypadByTotal
@@ -26,6 +26,7 @@ class AppWindow(QWidget):
         self.player_to_throw = None
         self.tts = TTSPiper()
         self.prefs = Preferences()
+        self.has_physical_keyboard = has_physical_keyboard()
 
         #----------------------------------------------------------------------------
         # Prepare resources (fonts, bitmaps, stylesheets) before building main window
@@ -50,10 +51,29 @@ class AppWindow(QWidget):
         #-----------------------------------------------------------------------------
         # Group per-player display elements into an array (dictionary) of named tuples
         #-----------------------------------------------------------------------------
+
+        class TouchLineEdit(QLineEdit):
+            clicked = Signal()
+
+            def __init__(self, parent):
+                super().__init__()
+                self.parent = parent
+                if not parent.has_physical_keyboard:
+                    self.setReadOnly(True)
+                    self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+                    self.clicked.connect(self.on_clicked)
+
+            def mousePressEvent(self, event):
+                self.clicked.emit()
+                super().mousePressEvent(event)
+
+            def on_clicked(self):
+                QMessageBox.information(self, "Message", "You clicked on the line edit!")
+
         PlayerDisplay = namedtuple("PlayerDisplay", ["name", "score", "led", "history"])
         self.player_displays = {}
         for player in [1, 2]:
-            self.player_displays[player] = PlayerDisplay(name = QLineEdit(), score = QLineEdit(), led = QLabel(), history = QListWidget())
+            self.player_displays[player] = PlayerDisplay(name = TouchLineEdit(self), score = QLineEdit(), led = QLabel(), history = QListWidget())
             self.player_displays[player].name.setStyleSheet(stylesheet_player_name)
             self.player_displays[player].name.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
             self.player_displays[player].name.setFixedHeight(60)
@@ -198,9 +218,6 @@ class AppWindow(QWidget):
         log.debug("ed2.height={}".format(self.player_displays[2].name.height()))
 
     def on_btnMenu_clicked(self):
-        print("has_physical_keyboard_qt {}".format(has_physical_keyboard_qt()))
-        print("has_physical_keyboard_os {}".format(has_physical_keyboard_os()))
-
         dialog = PrefsDialog(self, self.prefs)
         dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
         dialog.show()
@@ -218,13 +235,7 @@ class AppWindow(QWidget):
         self.reset_scores()
         self.setPlayer(player_number)
 
-def has_physical_keyboard_qt() -> bool:
-    if QGuiApplication.keyboardModifiers() & Qt.KeyboardModifier.ShiftModifier:
-        return True
-    else:
-        return False
-
-def has_physical_keyboard_os() -> bool:
+def has_physical_keyboard() -> bool:
     try:
         if not os.path.exists('/dev/input/by-path/'):
             return True  # Not Linux, assume keyboard exists
