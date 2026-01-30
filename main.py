@@ -5,7 +5,7 @@ from collections import namedtuple
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush, QGuiApplication
+from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush, QGuiApplication, QInputDevice
 from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QListWidget, \
     QGridLayout, QLabel, QListWidgetItem
 
@@ -198,6 +198,11 @@ class AppWindow(QWidget):
         log.debug("ed2.height={}".format(self.player_displays[2].name.height()))
 
     def on_btnMenu_clicked(self):
+        device = QInputDevice.primaryKeyboard()
+        print("{} devices".format(device))
+        # for d in devices:
+        #     print(d.name())
+
         dialog = PrefsDialog(self, self.prefs)
         dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
         dialog.show()
@@ -230,7 +235,7 @@ def main():
     else:
         log.debug("starting in windowed (debug) mode")
         appWindow.setWindowTitle("Darts Scoreboard")
-        appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
+        # appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         appWindow.setGeometry(800, 300, 1280, 720)
         appWindow.show()
 
