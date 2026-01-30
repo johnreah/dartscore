@@ -5,7 +5,7 @@ from collections import namedtuple
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush
+from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush, QGuiApplication
 from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QListWidget, \
     QGridLayout, QLabel, QListWidgetItem
 
@@ -17,6 +17,24 @@ from tts import TTSPiper
 
 log = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+
+def shutdown_virtual_keyboard():
+    input_method = QGuiApplication.inputMethod()
+    if input_method is None:
+        return
+    input_method.hide()
+    input_method.reset()
+    QGuiApplication.processEvents()
+    input_method.deleteLater()
+
+class TouchLineEdit(QLineEdit):
+    def focusInEvent(self, event):
+        super().focusInEvent(event)
+        QGuiApplication.inputMethod().show()
+
+    def focusOutEvent(self, event):
+        super().focusOutEvent(event)
+        QGuiApplication.inputMethod().hide()
 
 class AppWindow(QWidget):
 
@@ -53,7 +71,7 @@ class AppWindow(QWidget):
         PlayerDisplay = namedtuple("PlayerDisplay", ["name", "score", "led", "history"])
         self.player_displays = {}
         for player in [1, 2]:
-            self.player_displays[player] = PlayerDisplay(name = QLineEdit(), score = QLineEdit(), led = QLabel(), history = QListWidget())
+            self.player_displays[player] = PlayerDisplay(name = TouchLineEdit(), score = QLineEdit(), led = QLabel(), history = QListWidget())
             self.player_displays[player].name.setStyleSheet(stylesheet_player_name)
             self.player_displays[player].name.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
             self.player_displays[player].name.setFixedHeight(60)
@@ -135,6 +153,7 @@ class AppWindow(QWidget):
         vLayout.addLayout(hLayoutBottom)
 
     def closeEvent(self, event):
+        shutdown_virtual_keyboard()
         self.tts.shutdown()
         event.accept()
 
@@ -219,6 +238,7 @@ def main():
     log.debug("starting main()")
     log.debug(os.path.dirname(__file__))
 
+    os.environ.setdefault("QT_IM_MODULE", "qtvirtualkeyboard")
     app = QApplication(sys.argv)
     appWindow = AppWindow()
     appWindow.reset_everything()
