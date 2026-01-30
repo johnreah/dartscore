@@ -198,10 +198,8 @@ class AppWindow(QWidget):
         log.debug("ed2.height={}".format(self.player_displays[2].name.height()))
 
     def on_btnMenu_clicked(self):
-        device = QInputDevice.primaryKeyboard()
-        print("{} devices".format(device))
-        # for d in devices:
-        #     print(d.name())
+        print("has_physical_keyboard_qt {}".format(has_physical_keyboard_qt()))
+        print("has_physical_keyboard_os {}".format(has_physical_keyboard_os()))
 
         dialog = PrefsDialog(self, self.prefs)
         dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
@@ -219,6 +217,21 @@ class AppWindow(QWidget):
     def new_game(self, player_number):
         self.reset_scores()
         self.setPlayer(player_number)
+
+def has_physical_keyboard_qt() -> bool:
+    if QGuiApplication.keyboardModifiers() & Qt.KeyboardModifier.ShiftModifier:
+        return True
+    else:
+        return False
+
+def has_physical_keyboard_os() -> bool:
+    try:
+        if not os.path.exists('/dev/input/by-path/'):
+            return True  # Not Linux, assume keyboard exists
+        kbd_devices = [f for f in os.listdir('/dev/input/by-path/') if 'kbd' in f]
+        return True if len(kbd_devices) > 0 else False
+    except:
+        return True
 
 def main():
     log.debug("starting main()")
