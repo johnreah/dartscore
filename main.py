@@ -60,7 +60,7 @@ class AppWindow(QWidget):
             def __init__(self, parent):
                 super().__init__()
                 self.parent = parent
-                if  parent.has_physical_keyboard:
+                if True: # not parent.has_physical_keyboard:
                     self.setReadOnly(True)
                     self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
                     self.clicked.connect(self.on_clicked)
