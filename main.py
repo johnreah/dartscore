@@ -75,15 +75,6 @@ class AppWindow(QWidget):
                 dialog.name_edit_dialog_ok.connect(self.on_dialog_ok)
                 dialog.show()
 
-                parent_geo = self.window().geometry()
-                dialog_geo = dialog.geometry()
-                x = parent_geo.x() + (parent_geo.width() - dialog_geo.width()) // 2
-                y = parent_geo.y() + (parent_geo.height() - dialog_geo.height()) // 6
-                dialog.move(x, y)
-
-
-
-
             def on_dialog_ok(self, str):
                 self.name_updated.emit(self.player, str)
 
