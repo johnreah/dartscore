@@ -36,11 +36,11 @@ class NameEditDialog(QDialog):
 
         self.edName.selectAll()
 
-    def showEvent(self, event):
-        super().showEvent(event)
-        if self.parentWidget():
-            parent_geo = self.parentWidget().window().geometry()
-            geo = self.geometry()
-            x = parent_geo.x() + (parent_geo.width() - geo.width()) // 2
-            y = parent_geo.y() + (parent_geo.height() - geo.height()) // 6
-            self.move(x, y)
+    # def showEvent(self, event):
+    #     super().showEvent(event)
+    #     if self.parentWidget():
+    #         parent_geo = self.parentWidget().window().geometry()
+    #         geo = self.geometry()
+    #         x = parent_geo.x() + (parent_geo.width() - geo.width()) // 2
+    #         y = parent_geo.y() + (parent_geo.height() - geo.height()) // 6
+    #         self.move(x, y)
