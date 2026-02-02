@@ -11,9 +11,11 @@ from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QHBoxLayout, QVB
 
 import score_utils
 from keypadbytotal import KeypadByTotal
+from name_edit_dialog import NameEditDialog
 from preferences import Preferences
 from prefs_dialog import DialogResult, PrefsDialog
 from tts import TTSPiper
+from virtual_keyboard import VirtualKeyboard
 
 log = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -58,7 +60,7 @@ class AppWindow(QWidget):
             def __init__(self, parent):
                 super().__init__()
                 self.parent = parent
-                if not parent.has_physical_keyboard:
+                if  parent.has_physical_keyboard:
                     self.setReadOnly(True)
                     self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
                     self.clicked.connect(self.on_clicked)
@@ -68,7 +70,9 @@ class AppWindow(QWidget):
                 super().mousePressEvent(event)
 
             def on_clicked(self):
-                QMessageBox.information(self, "Message", "You clicked on the line edit!")
+                dialog = NameEditDialog(self, self.parent.prefs)
+                # dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
+                dialog.show()
 
         PlayerDisplay = namedtuple("PlayerDisplay", ["name", "score", "led", "history"])
         self.player_displays = {}
@@ -251,6 +255,10 @@ def main():
     app = QApplication(sys.argv)
     appWindow = AppWindow()
     appWindow.reset_everything()
+
+    vkb = VirtualKeyboard()
+    vkb.setWindowModality(Qt.WindowModality.ApplicationModal)
+    vkb.show()
 
     if sys.argv[-1] == "fullscreen":
         log.debug("starting in full-screen (release) mode")
