@@ -17,6 +17,8 @@ class VirtualKeyboard(QWidget):
         main_layout.setSpacing(5)
         main_layout.setContentsMargins(10, 10, 10, 10)
 
+        self.setMinimumHeight(450)
+
         # Define keyboard rows
         self.keys = [
             ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
