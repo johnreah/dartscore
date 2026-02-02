@@ -70,7 +70,7 @@ class AppWindow(QWidget):
                 super().mousePressEvent(event)
 
             def on_clicked(self):
-                dialog = NameEditDialog(self, self.parent.prefs)
+                dialog = NameEditDialog(self, self.text())
                 # dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
                 dialog.show()
 
@@ -266,9 +266,6 @@ def main():
         # appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         appWindow.setGeometry(800, 300, 1280, 720)
         appWindow.show()
-
-    vkb = VirtualKeyboard()
-    vkb.show()
 
     sys.exit(app.exec())
 

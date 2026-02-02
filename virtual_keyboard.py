@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout
+from PySide6.QtWidgets import QWidget, QGridLayout, QPushButton, QVBoxLayout, QHBoxLayout, QSizePolicy
 from PySide6.QtCore import Signal, Qt
 
 
@@ -9,22 +9,24 @@ class VirtualKeyboard(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.shift_active = False
+        self.shift_active = True
         self.init_ui()
 
     def init_ui(self):
         main_layout = QVBoxLayout(self)
+
+        self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        self.setFixedWidth(1200)
+        self.setFixedHeight(450)
+
         main_layout.setSpacing(5)
         main_layout.setContentsMargins(10, 10, 10, 10)
 
-        self.setMinimumHeight(450)
-
-        # Define keyboard rows
         self.keys = [
             ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', 'Backspace'],
             ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '[', ']'],
             ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'", 'Enter'],
-            ['Shift', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', 'Shift'],
+            ['ShiftL', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', 'ShiftR'],
             ['Space']
         ]
 
@@ -68,11 +70,13 @@ class VirtualKeyboard(QWidget):
         row4_layout.setSpacing(5)
         for key in self.keys[3]:
             btn = self.create_key_button(key)
-            if key == 'Shift':
+            if key.startswith('Shift'):
                 btn.setMinimumWidth(80)
+                btn.setText('Shift')
             row4_layout.addWidget(btn)
             self.key_buttons[key] = btn
         main_layout.addLayout(row4_layout)
+        self.update_shift_state()
 
         # Row 5 (Space bar)
         row5_layout = QHBoxLayout()
@@ -108,7 +112,7 @@ class VirtualKeyboard(QWidget):
 
     def handle_key_press(self, key):
         """Handle a key press"""
-        if key == 'Shift':
+        if key in ['ShiftL', 'ShiftR']:
             self.shift_active = not self.shift_active
             self.update_shift_state()
         elif key == 'Backspace':
@@ -130,8 +134,8 @@ class VirtualKeyboard(QWidget):
         """Update the visual state of shift keys"""
         shift_style_active = """
             QPushButton {
-                font-size: 16px;
-                font-weight: bold;
+                font-size: 32px;
+                font-weight: normal;
                 background-color: #4CAF50;
                 color: white;
                 border: 2px solid #45a049;
@@ -140,8 +144,8 @@ class VirtualKeyboard(QWidget):
         """
         shift_style_normal = """
             QPushButton {
-                font-size: 16px;
-                font-weight: bold;
+                font-size: 32px;
+                font-weight: normal;
                 background-color: #f0f0f0;
                 border: 2px solid #ccc;
                 border-radius: 5px;
@@ -155,10 +159,11 @@ class VirtualKeyboard(QWidget):
         # Update all letter keys
         for row in self.keys[1:4]:  # Letter rows
             for key in row:
-                if key not in ['Shift', 'Enter', 'Backspace'] and key.isalpha():
+                if key not in ['ShiftL', 'ShiftR', 'Enter', 'Backspace'] and key.isalpha():
                     self.key_buttons[key].setText(key if self.shift_active else key.lower())
 
         # Update shift key appearance
         style = shift_style_active if self.shift_active else shift_style_normal
-        self.key_buttons['Shift'].setStyleSheet(style)
+        self.key_buttons['ShiftL'].setStyleSheet(style)
+        self.key_buttons['ShiftR'].setStyleSheet(style)
 
