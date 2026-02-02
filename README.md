@@ -92,7 +92,7 @@ haven't fully understood this topic, but it seems to work well.
 * ~~Refactor player widgets into array to reduce code duplication~~ 
 * ~~Implement basic gameplay (reset, turns, etc.)~~
 * ~~Implement audio output from Chris's pull request~~
-* Write deployment notes for Raspberry Pi (screen orientation, auto-login)
+* Write deployment notes for Raspberry Pi (screen orientation, auto-login, Wayland)
 * Fix Raspberry Pi to wall next to dartboard (dependency - fix dartboard to wall)
 * Revisit score entry by-dart for a later version
 

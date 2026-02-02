@@ -36,7 +36,11 @@ class NameEditDialog(QDialog):
 
         self.edName.selectAll()
 
-    def showEvent(self, event): # doesn't work as it should on RPi
+    def showEvent(self, event):
+        # The intention of this is to move the dialog above the input method
+        # editor (virtual keyboard) on Raspberry Pi. However although it
+        # works on Windows it doesn't work as it should on the Wayland
+        # compositor.
         super().showEvent(event)
         if self.parentWidget():
             parent_geo = self.parentWidget().window().geometry()
