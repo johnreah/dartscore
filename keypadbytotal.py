@@ -103,6 +103,9 @@ class KeypadByTotal(QWidget):
             button.setIconSize(QSize(40, 40))
         return button
 
+    def reset(self):
+        self.display.setText("0")
+
     def on_button_click(self, command, payload = None):
         log.debug("Command={} payload={}".format(command, payload))
         input = self.display.text()

@@ -99,6 +99,9 @@ class AppWindow(QWidget):
             self.player_displays[player].history.setItemAlignment(Qt.AlignmentFlag.AlignRight)
             self.player_displays[player].history.setStyleSheet(stylesheet_player_score_history)
 
+        self.player_displays[1].name.setText(self.prefs.players_player1)
+        self.player_displays[2].name.setText(self.prefs.players_player2)
+
         vLayout = QVBoxLayout(self)
 
         #-------------------
@@ -126,12 +129,12 @@ class AppWindow(QWidget):
         # tabWidget.addTab(KeypadByDart(), "By Dart")
         # tabWidget.setStyleSheet(stylesheet_tab_widget)
 
-        keypadbytotal = KeypadByTotal(self.prefs)
-        keypadbytotal.total_entered.connect(lambda total: self.handleScore(total))
+        self.keypadbytotal = KeypadByTotal(self.prefs)
+        self.keypadbytotal.total_entered.connect(lambda total: self.handleScore(total))
 
         # Use grid layout for a single centred keypad. Replace with TabWidget later.
         keypad_layout = QGridLayout()
-        keypad_layout.addWidget(keypadbytotal, 0, 0)
+        keypad_layout.addWidget(self.keypadbytotal, 0, 0)
 
         hLayoutMiddle.addWidget(self.player_displays[1].history)
         spacer = QWidget()
@@ -176,9 +179,12 @@ class AppWindow(QWidget):
             self.edStatusBar.setText("Player 1 to throw. Enter score using keypad and press green Enter button when done.")
 
     def reset_everything(self):
-        self.player_displays[1].name.setText(self.prefs.players_player1)
-        self.player_displays[2].name.setText(self.prefs.players_player2)
+        self.player_displays[1].name.setText("Player 1")
+        self.player_displays[2].name.setText("Player 2")
+        self.prefs.players_player1 = "Player 1"
+        self.prefs.players_player2 = "Player 2"
         self.reset_scores()
+        self.keypadbytotal.reset()
 
     def appendHistory(self, player_number, itemString):
         item = QListWidgetItem(itemString)
@@ -267,7 +273,7 @@ def main():
 
     app = QApplication(sys.argv)
     appWindow = AppWindow()
-    appWindow.reset_everything()
+    appWindow.reset_scores()
 
     if sys.argv[-1] == "fullscreen":
         log.debug("starting in full-screen (release) mode")

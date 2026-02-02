@@ -1,5 +1,3 @@
-from enum import Enum, auto
-
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox, QLineEdit
 
@@ -19,7 +17,6 @@ class NameEditDialog(QDialog):
         self.edName = QLineEdit(self.name, self)
         self.edName.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.edName.setReadOnly(False)
-        self.edName.setFixedHeight(60)
         self.edName.setStyleSheet("""
             QLineEdit {
                 font-size: 24px;
@@ -39,3 +36,11 @@ class NameEditDialog(QDialog):
 
         self.edName.selectAll()
 
+    def showEvent(self, event):
+        super().showEvent(event)
+        if self.parentWidget():
+            parent_geo = self.parentWidget().window().geometry()
+            geo = self.geometry()
+            x = parent_geo.x() + (parent_geo.width() - geo.width()) // 2
+            y = parent_geo.y() + (parent_geo.height() - geo.height()) // 6
+            self.move(x, y)
