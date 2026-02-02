@@ -259,6 +259,8 @@ def main():
     vkb = VirtualKeyboard()
     vkb.setWindowModality(Qt.WindowModality.ApplicationModal)
     vkb.show()
+    vkb.activateWindow()
+    vkb.raise_()
 
     if sys.argv[-1] == "fullscreen":
         log.debug("starting in full-screen (release) mode")
