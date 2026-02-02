@@ -56,7 +56,7 @@ class VirtualKeyboard(QWidget):
         for key in self.keys[2]:
             btn = self.create_key_button(key)
             if key == 'Enter':
-                btn.setMinimumWidth(80)
+                btn.setMinimumWidth(200)
             row3_layout.addWidget(btn)
             self.key_buttons[key] = btn
         main_layout.addLayout(row3_layout)
@@ -87,11 +87,11 @@ class VirtualKeyboard(QWidget):
     def create_key_button(self, key_text):
         """Create a button for a keyboard key"""
         btn = QPushButton(key_text)
-        btn.setMinimumSize(50, 50)
+        btn.setMinimumSize(80, 80)
         btn.setStyleSheet("""
             QPushButton {
-                font-size: 16px;
-                font-weight: bold;
+                font-size: 32px;
+                font-weight: normal;
                 background-color: #f0f0f0;
                 border: 2px solid #ccc;
                 border-radius: 5px;
