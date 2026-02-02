@@ -71,8 +71,11 @@ class AppWindow(QWidget):
 
             def on_clicked(self):
                 dialog = NameEditDialog(self, self.text())
-                # dialog.accepted.connect(lambda: self.handle_dialog_result(dialog.result))
+                dialog.accepted.connect(lambda: self.on_dialog_ok(dialog.result))
                 dialog.show()
+
+            def on_dialog_ok(self, str):
+                pass
 
         PlayerDisplay = namedtuple("PlayerDisplay", ["name", "score", "led", "history"])
         self.player_displays = {}

@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox, QPushButton, QHBoxLayout, QLabel, QGroupBox, \
     QCheckBox, QLineEdit, QSizePolicy
 
@@ -13,6 +13,8 @@ class DialogResult(Enum):
     CANCEL = auto()
 
 class NameEditDialog(QDialog):
+
+    name_edit_dialog_ok = Signal(str)
 
     def __init__(self, parent, name: str):
         super().__init__(parent = parent)
@@ -38,16 +40,16 @@ class NameEditDialog(QDialog):
         """)
         vLayout.addWidget(self.edName)
 
-        keyboard = VirtualKeyboard(self)
-        vLayout.addWidget(keyboard)
-
         dbb = QDialogButtonBox.Ok | QDialogButtonBox.Cancel
         self.buttonBox = QDialogButtonBox(dbb)
-        self.buttonBox.accepted.connect(lambda: self.accept_with_result(DialogResult.OK))
         self.buttonBox.rejected.connect(self.reject)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.accepted.connect(lambda: self.name_edit_dialog_ok.emit(self.edName.text()))
 
         vLayout.addWidget(self.buttonBox)
 
-    def accept_with_result(self, result):
-        self.result = result
-        self.accept()
+        self.edName.selectAll()
+
+    # def accept_with_result(self, result):
+    #     self.result = result
+    #     self.accept()
