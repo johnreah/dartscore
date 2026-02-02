@@ -256,12 +256,6 @@ def main():
     appWindow = AppWindow()
     appWindow.reset_everything()
 
-    vkb = VirtualKeyboard()
-    vkb.setWindowModality(Qt.WindowModality.ApplicationModal)
-    vkb.show()
-    vkb.activateWindow()
-    vkb.raise_()
-
     if sys.argv[-1] == "fullscreen":
         log.debug("starting in full-screen (release) mode")
         appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
@@ -272,6 +266,9 @@ def main():
         # appWindow.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         appWindow.setGeometry(800, 300, 1280, 720)
         appWindow.show()
+
+    vkb = VirtualKeyboard()
+    vkb.show()
 
     sys.exit(app.exec())
 
