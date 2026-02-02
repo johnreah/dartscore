@@ -5,9 +5,9 @@ from collections import namedtuple
 
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush, QGuiApplication, QInputDevice
+from PySide6.QtGui import QFont, QFontDatabase, QPalette, QPixmap, QBrush
 from PySide6.QtWidgets import QApplication, QWidget, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QListWidget, \
-    QGridLayout, QLabel, QListWidgetItem, QMessageBox
+    QGridLayout, QLabel, QListWidgetItem
 
 import score_utils
 from keypadbytotal import KeypadByTotal
@@ -15,7 +15,6 @@ from name_edit_dialog import NameEditDialog
 from preferences import Preferences
 from prefs_dialog import DialogResult, PrefsDialog
 from tts import TTSPiper
-from virtual_keyboard import VirtualKeyboard
 
 log = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -55,36 +54,39 @@ class AppWindow(QWidget):
         #-----------------------------------------------------------------------------
 
         class TouchLineEdit(QLineEdit):
-            clicked = Signal()
+            name_updated = Signal(int, str)
+            _clicked = Signal()
 
-            def __init__(self, parent):
+            def __init__(self, parent, player):
                 super().__init__()
                 self.parent = parent
+                self.player = player
                 if True: # not parent.has_physical_keyboard:
                     self.setReadOnly(True)
                     self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-                    self.clicked.connect(self.on_clicked)
+                    self._clicked.connect(self.on_clicked)
 
             def mousePressEvent(self, event):
-                self.clicked.emit()
+                self._clicked.emit()
                 super().mousePressEvent(event)
 
             def on_clicked(self):
                 dialog = NameEditDialog(self, self.text())
-                dialog.accepted.connect(lambda: self.on_dialog_ok(dialog.result))
+                dialog.name_edit_dialog_ok.connect(self.on_dialog_ok)
                 dialog.show()
 
             def on_dialog_ok(self, str):
-                pass
+                self.name_updated.emit(self.player, str)
 
         PlayerDisplay = namedtuple("PlayerDisplay", ["name", "score", "led", "history"])
         self.player_displays = {}
         for player in [1, 2]:
-            self.player_displays[player] = PlayerDisplay(name = TouchLineEdit(self), score = QLineEdit(), led = QLabel(), history = QListWidget())
+            self.player_displays[player] = PlayerDisplay(name = TouchLineEdit(self, player), score = QLineEdit(), led = QLabel(), history = QListWidget())
             self.player_displays[player].name.setStyleSheet(stylesheet_player_name)
             self.player_displays[player].name.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
             self.player_displays[player].name.setFixedHeight(60)
             self.player_displays[player].name.setMinimumWidth(300)
+            self.player_displays[player].name.name_updated.connect(self.on_name_updated)
 
             self.player_displays[player].score.setStyleSheet(stylesheet_player_score)
             self.player_displays[player].score.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
@@ -174,7 +176,8 @@ class AppWindow(QWidget):
             self.edStatusBar.setText("Player 1 to throw. Enter score using keypad and press green Enter button when done.")
 
     def reset_everything(self):
-        [self.player_displays[player].name.setText("Player {}".format(player)) for player in (1, 2)]
+        self.player_displays[1].name.setText(self.prefs.players_player1)
+        self.player_displays[2].name.setText(self.prefs.players_player2)
         self.reset_scores()
 
     def appendHistory(self, player_number, itemString):
@@ -241,6 +244,13 @@ class AppWindow(QWidget):
     def new_game(self, player_number):
         self.reset_scores()
         self.setPlayer(player_number)
+
+    def on_name_updated(self, player, name):
+        self.player_displays[player].name.setText(name)
+        match player:
+            case 1: self.prefs.players_player1 = name
+            case 2: self.prefs.players_player2 = name
+            case _: raise ValueError("Invalid player number")
 
 def has_physical_keyboard() -> bool:
     try:

@@ -1,19 +1,9 @@
 from enum import Enum, auto
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox, QPushButton, QHBoxLayout, QLabel, QGroupBox, \
-    QCheckBox, QLineEdit, QSizePolicy
-
-from preferences import Preferences
-from virtual_keyboard import VirtualKeyboard
-
-
-class DialogResult(Enum):
-    OK = auto()
-    CANCEL = auto()
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox, QLineEdit
 
 class NameEditDialog(QDialog):
-
     name_edit_dialog_ok = Signal(str)
 
     def __init__(self, parent, name: str):
@@ -23,7 +13,6 @@ class NameEditDialog(QDialog):
         self.result = None
         self.setModal(True)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.Dialog)
-        # self.setStyleSheet(dialogStyle)
 
         vLayout = QVBoxLayout(self)
 
@@ -50,6 +39,3 @@ class NameEditDialog(QDialog):
 
         self.edName.selectAll()
 
-    # def accept_with_result(self, result):
-    #     self.result = result
-    #     self.accept()
